@@ -62,6 +62,7 @@
 #include "pros/rtos.h"
 #include "pros/screen.h"
 #include "pros/vision.h"
+#include "lemlib/api.hpp"
 
 #ifdef __cplusplus
 #include "pros/adi.hpp"
