@@ -76,9 +76,36 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
 
 //------------------------------------------------------------------------------------------------
 
+//LB-----------------------------------------------------------------
+void setLB(float targetAngle, float voltage) {
+  while (true) {
+    float currentAngle = rotation_sensor.get_position() / -100.0;
+
+    float error = targetAngle - currentAngle;
+
+    if (fabs(error) <= 1) {
+      break;
+    }
+
+    if (error > 0) { 
+      left_LB.move_voltage(voltage);
+      right_LB.move_voltage(voltage);
+    } else { 
+      left_LB.move_voltage(-voltage);
+      right_LB.move_voltage(-voltage);
+    }
+
+    pros::delay(20);
+  }
+  left_LB.move_voltage(0);
+  right_LB.move_voltage(0);
+}
+//----------------------------------------------------------------
+
 void initialize() {
   pros::lcd::initialize(); // initialize brain screen
 	chassis.calibrate(); // calibrate sensors
+  rotation_sensor.reset_position();
 
   pros::Task screen_task([&]() {
         while (true) {
@@ -86,6 +113,7 @@ void initialize() {
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+            pros::lcd::print(3, "LB: %f", rotation_sensor.get_position() / -100.0); // rotation
             // delay to save resources
             pros::delay(20);
         }
@@ -95,7 +123,8 @@ void initialize() {
 	// set position to x:0, y:0, heading:0
 	chassis.setPose(0, 0, 0);
 	// turn to face heading 90 with a very long timeout
-	chassis.moveToPoint(100, 100, 100000);
+  // chassis.moveToPoint(0, 48, 10000);
+  // chassis.turnToHeading(45, 1000);
 }
 
 void disabled() {}
@@ -108,6 +137,7 @@ void opcontrol() {
   bool ClampValue = false;
 
   while (true) {
+    bool shift = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
     // DRIVE ----------------------------------------------------------------
     float LeftY = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y);
     float RightY = controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y);
@@ -116,9 +146,12 @@ void opcontrol() {
 
     // INTAKE ----------------------------------------------------------------
     if (controller.get_digital(E_CONTROLLER_DIGITAL_R1)) {
-      intake.move_voltage(20000);
-    } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R2)) {
-      intake.move_voltage(-20000);
+      if(!shift){
+        intake.move_voltage(20000);
+      }
+      else{
+        intake.move_voltage(-20000);
+      }
     } else {
       intake.move_voltage(0);
     }
@@ -131,16 +164,20 @@ void opcontrol() {
 
     // LADY BROWN ----------------------------------------------------------------
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      left_LB.move_voltage(20000);
-      right_LB.move_voltage(20000);
+      setLB(20, 2500);
     } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      left_LB.move_voltage(-20000);
-      right_LB.move_voltage(-20000);
+      if(!shift){
+        left_LB.move_voltage(12000);
+        right_LB.move_voltage(12000);
+      } else{
+        left_LB.move_voltage(-12000);
+        right_LB.move_voltage(-12000);
+      }
     } else {
       left_LB.move_voltage(0);
       right_LB.move_voltage(0);
     }
 
-    pros::delay(100);
+    pros::delay(20);
   }
 }
