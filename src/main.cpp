@@ -1,6 +1,6 @@
 #include "main.h"
-
 #include "globals.h"
+#include "auton.h"
 
 #include <iostream>
 #include <fstream>
@@ -115,20 +115,22 @@ void initialize() {
   chassis.setPose(0, 0, 0);
   rotation_sensor.reset_position();
 
+  leftAuto();
+
   pros::Task screen_task([&]() {
-        while (true) {
-            // print robot location to the brain screen
-            lemlib::Pose robotPos = chassis.getPose();
-            pros::lcd::print(0, "X: %f", robotPos.x); // x
-            pros::lcd::print(1, "Y: %f", robotPos.y); // y
-            pros::lcd::print(2, "Theta: %f", robotPos.theta); // heading
-            pros::lcd::print(3, "LB: %f", rotation_sensor.get_position() / -100.0); // rotation
-            // pros::lcd::print(4, "COLOR SORTING: %s", rogueRing() ? "ROGUE!" : "normal"); // color sorting
-            
-            // delay to save resources
-            pros::delay(20);
-        }
-    });
+    while (true) {
+        // print robot location to the brain screen
+        lemlib::Pose robotPos = chassis.getPose();
+        pros::lcd::print(0, "X: %f", robotPos.x); // x
+        pros::lcd::print(1, "Y: %f", robotPos.y); // y
+        pros::lcd::print(2, "Theta: %f", robotPos.theta); // heading
+        pros::lcd::print(3, "LB: %f", rotation_sensor.get_position() / -100.0); // rotation
+        // pros::lcd::print(4, "COLOR SORTING: %s", rogueRing() ? "ROGUE!" : "normal"); // color sorting
+        
+        // delay to save resources
+        pros::delay(20);
+    }
+  });
 }
 
 void disabled() {}
@@ -139,9 +141,10 @@ void autonomous() {}
 
 void opcontrol() {
   bool ClampValue = false;
+  bool DoinkerValue = false;
+  bool HangValue = false;
 
   while (true) {
-    bool shift = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
     // DRIVE ----------------------------------------------------------------
     float LeftY = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y);
     float RightY = controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y);
@@ -150,12 +153,9 @@ void opcontrol() {
 
     // INTAKE ----------------------------------------------------------------
     if (controller.get_digital(E_CONTROLLER_DIGITAL_R1)) {
-      if(!shift){
         intake.move_voltage(20000);
-      }
-      else{
+    } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R2)){
         intake.move_voltage(-20000);
-      }
     } else {
       intake.move_voltage(0);
     }
@@ -164,6 +164,16 @@ void opcontrol() {
     if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_UP)) {
       clamp.set_value(!ClampValue);
       ClampValue = !ClampValue;
+    }
+
+    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN)) {
+      doinker.set_value(!DoinkerValue);
+      DoinkerValue = !DoinkerValue;
+    }
+
+    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_B)) {
+      hang.set_value(!HangValue);
+      HangValue = !HangValue;
     }
 
     // LADY BROWN ----------------------------------------------------------------
@@ -179,7 +189,6 @@ void opcontrol() {
       left_LB.move_voltage(0);
       right_LB.move_voltage(0);
     }
-
     pros::delay(20);
   }
 }

@@ -19,5 +19,9 @@ extern pros::Rotation rotation_sensor;
 // extern pros::Vision vision_sensor;
 
 extern pros::adi::DigitalOut clamp;
+extern pros::adi::DigitalOut doinker;
+extern pros::adi::DigitalOut hang;
+
+extern lemlib::Chassis chassis;
 
 #endif

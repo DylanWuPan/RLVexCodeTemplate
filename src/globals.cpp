@@ -10,7 +10,10 @@ pros::Motor right_LB(3, pros::v5::MotorGears::green, pros::v5::MotorUnits::degre
 pros::Rotation rotation_sensor(17);
 pros::Imu inertial_sensor(1);
 
-pros::adi::DigitalOut clamp ('B', false);
+pros::adi::DigitalOut hang ('A', false);
+pros::adi::DigitalOut clamp ('B', true);
+pros::adi::DigitalOut doinker ('C', false);
+
 pros::Controller controller(CONTROLLER_MASTER);
 
 // pros::Vision vision_sensor(17);
