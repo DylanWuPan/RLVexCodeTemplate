@@ -3,5 +3,6 @@
 
 // Function declarations
 void leftAuto();
+void skillsAuto();
 
 #endif

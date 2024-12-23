@@ -115,7 +115,7 @@ void initialize() {
   chassis.setPose(0, 0, 0);
   rotation_sensor.reset_position();
 
-  leftAuto();
+  skillsAuto();
 
   pros::Task screen_task([&]() {
     while (true) {
@@ -137,7 +137,9 @@ void disabled() {}
 
 void competition_initialize() {}
 
-void autonomous() {}
+void autonomous() {
+  leftAuto();
+}
 
 void opcontrol() {
   bool ClampValue = false;
