@@ -122,7 +122,7 @@ void initialize() {
   chassis.setPose(0, 0, 0);
   rotation_sensor.reset_position();
 
-  skillsAuto();
+  // skillsAuto();
 
   pros::Task screen_task([&]() {
     while (true) {
@@ -170,17 +170,19 @@ void opcontrol() {
     }
 
     // CLAMP ----------------------------------------------------------------
-    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_UP)) {
+    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN)) {
       clamp.set_value(!ClampValue);
       ClampValue = !ClampValue;
     }
 
-    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN)) {
+    // DOINKER ----------------------------------------------------------------
+    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_RIGHT)) {
       doinker.set_value(!DoinkerValue);
       DoinkerValue = !DoinkerValue;
     }
 
-    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_B)) {
+    // HANG ----------------------------------------------------------------
+    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_UP)) {
       hang.set_value(!HangValue);
       HangValue = !HangValue;
     }

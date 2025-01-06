@@ -88,7 +88,7 @@ void skillsAutoWithLB(){
 void skillsAuto(){
   chassis.setPose(72, 9, 0);
 
-  chassis.moveToPoint(72, 7, 1000, {.forwards = false, .maxSpeed = 50});
+  chassis.moveToPoint(72, 7, 2000, {.forwards = false, .maxSpeed = 50});
   pros::delay(500);
   intake.move_voltage(12000);
   pros::delay(500);
@@ -104,18 +104,13 @@ void skillsAuto(){
   clamp.set_value(true);
   pros::delay(500);
 
-  chassis.moveToPoint(93, 40, 3000);
-  // pros::delay(500);
+  chassis.moveToPoint(93, 42, 3000);
   chassis.moveToPoint(116, 94, 3000, {.maxSpeed = 100});
-  // pros::delay(500);
   chassis.moveToPoint(128, 72, 3000, {.maxSpeed = 60});
-  // pros::delay(500);
   chassis.moveToPoint(121, 48, 3000, {.maxSpeed = 60});
-  // pros::delay(500);
   chassis.moveToPoint(121, 24, 3000, {.maxSpeed = 60});
-  // pros::delay(500);
   chassis.moveToPoint(121, 14, 3000, {.maxSpeed = 50});
-  // pros::delay(2000);
+  pros::delay(2000);
   chassis.turnToHeading(-75, 500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
   chassis.moveToPoint(134, 6, 2000, {.forwards = false, .maxSpeed = 50});
   pros::delay(500);
@@ -132,11 +127,11 @@ void skillsAuto(){
   pros::delay(500);
 
   chassis.moveToPoint(48, 48, 3000);
-  // pros::delay(500);
   chassis.moveToPoint(24, 60, 3000, {.maxSpeed = 60});
-  // pros::delay(500);
-  // chassis.moveToPoint(128, 72, 3000, {.maxSpeed = 60});
-  // pros::delay(1500);
+  chassis.moveToPoint(30, 48, 3000, {.maxSpeed = 60});
+  chassis.moveToPoint(30, 24, 3000, {.maxSpeed = 60});
+  chassis.moveToPoint(30, 12, 3000, {.maxSpeed = 60});
+
   // chassis.moveToPoint(122, 48, 3000, {.maxSpeed = 60});
   // pros::delay(1500);
   // chassis.moveToPoint(122, 24, 3000, {.maxSpeed = 60});
