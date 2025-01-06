@@ -104,39 +104,42 @@ void skillsAuto(){
   clamp.set_value(true);
   pros::delay(500);
 
-  chassis.moveToPoint(93, 42, 3000);
-  chassis.moveToPoint(116, 94, 3000, {.maxSpeed = 100});
+  chassis.moveToPoint(94, 42, 3000);
+  chassis.moveToPoint(116, 92, 3000, {.maxSpeed = 100});
   chassis.moveToPoint(128, 72, 3000, {.maxSpeed = 60});
   chassis.moveToPoint(121, 48, 3000, {.maxSpeed = 60});
   chassis.moveToPoint(121, 24, 3000, {.maxSpeed = 60});
   chassis.moveToPoint(121, 14, 3000, {.maxSpeed = 50});
-  pros::delay(2000);
+  pros::delay(2500);
   chassis.turnToHeading(-75, 500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
   chassis.moveToPoint(134, 6, 2000, {.forwards = false, .maxSpeed = 50});
   pros::delay(500);
   clamp.set_value(false);
-  pros::delay(500);
 
   //SECOND GOAL
 
-  chassis.moveToPoint(72, 16, 2000);
-  chassis.turnToHeading(90, 1000);
-  chassis.moveToPoint(52, 16, 2000, {.forwards = false, .maxSpeed = 50});
+  chassis.moveToPoint(72, 22, 2000);
+  chassis.turnToHeading(90, 1000, {.maxSpeed = 80});
+  chassis.moveToPoint(52, 22, 2000, {.forwards = false, .maxSpeed = 50});
   pros::delay(1000);
   clamp.set_value(true);
   pros::delay(500);
 
-  chassis.moveToPoint(48, 48, 3000);
-  chassis.moveToPoint(24, 60, 3000, {.maxSpeed = 60});
-  chassis.moveToPoint(30, 48, 3000, {.maxSpeed = 60});
-  chassis.moveToPoint(30, 24, 3000, {.maxSpeed = 60});
-  chassis.moveToPoint(30, 12, 3000, {.maxSpeed = 60});
-
-  // chassis.moveToPoint(122, 48, 3000, {.maxSpeed = 60});
-  // pros::delay(1500);
-  // chassis.moveToPoint(122, 24, 3000, {.maxSpeed = 60});
-  // pros::delay(1500);
-  // chassis.moveToPoint(122, 14, 3000, {.maxSpeed = 50});
+  chassis.moveToPoint(48, 50, 3000);
+  chassis.moveToPoint(45, 45, 3000);
+  chassis.moveToPoint(20, 74, 3000, {.maxSpeed = 60});
+  chassis.moveToPoint(26, 48, 3000, {.maxSpeed = 60});
+  chassis.moveToPoint(26, 24, 3000, {.maxSpeed = 60});
+  chassis.moveToPoint(26, 12, 3000, {.maxSpeed = 60});
+  chassis.turnToHeading(-45, 500);
+  chassis.moveToPoint(12, 24, 1000, {.maxSpeed = 60});
+  pros::delay(2000);
+  chassis.turnToHeading(75, 500);
+  chassis.moveToPoint(6, 6, 2000, {.forwards = false, .maxSpeed = 50});
+  pros::delay(500);
+  clamp.set_value(false);
+  pros::delay(500);
+  
   // pros::delay(2500);
   // chassis.turnToHeading(-75, 500);
   // chassis.moveToPoint(134, 6, 2000, {.forwards = false, .maxSpeed = 50});
