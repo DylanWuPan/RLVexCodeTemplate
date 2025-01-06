@@ -90,11 +90,18 @@ void setLB(float targetAngle, float voltage) {
       right_LB.move_voltage(-voltage);
     }
 
-    pros::delay(20);
+    pros::delay(10);
   }
   left_LB.move_voltage(0);
   right_LB.move_voltage(0);
 }
+// void LBControl() {
+//   double kp = 0.5;
+//   double error = target - (rotation_sensor.get_position() / -100.0);
+//   double velocity = kp * error;
+//   left_LB.move(velocity);
+//   right_LB.move(velocity);
+// }
 
 // bool rogueRing(){
 //   vision_object_s_t redRing = vision_sensor.get_by_sig(0, RED_RING_SIG);
