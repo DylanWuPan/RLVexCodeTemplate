@@ -122,7 +122,7 @@ void initialize() {
   chassis.setPose(0, 0, 0);
   rotation_sensor.reset_position();
 
-  // skillsAuto();
+  skillsAuto();
 
   pros::Task screen_task([&]() {
     while (true) {
