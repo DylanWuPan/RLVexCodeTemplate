@@ -2,6 +2,23 @@
 #include "globals.h"
 #include "auton.h"
 
+void clampGoal(){
+  pros::delay(1000);
+  clamp.set_value(true);
+  pros::delay(500);
+}
+
+void unclampGoal(){
+  pros::delay(500);
+  clamp.set_value(false);
+}
+
+void allianceStake(){
+  pros::delay(500);
+  intake.move_voltage(12000);
+  pros::delay(500);
+}
+
 void leftAuto(){
   chassis.setPose(57.5, 13.5, -90);
 
@@ -89,9 +106,7 @@ void skillsAuto(){
   chassis.setPose(72, 9, 0);
 
   chassis.moveToPoint(72, 7, 2000, {.forwards = false, .maxSpeed = 50});
-  pros::delay(500);
-  intake.move_voltage(12000);
-  pros::delay(500);
+  allianceStake();
 
   // FIRST GOAL
 
@@ -100,49 +115,61 @@ void skillsAuto(){
   clamp.set_value(false);
 
   chassis.moveToPoint(92, 22, 2000, {.forwards = false, .maxSpeed = 50});
-  pros::delay(1000);
-  clamp.set_value(true);
-  pros::delay(500);
+  clampGoal();
 
   chassis.moveToPoint(94, 42, 3000);
   chassis.moveToPoint(116, 92, 3000, {.maxSpeed = 100});
-  chassis.moveToPoint(128, 72, 3000, {.maxSpeed = 60});
-  chassis.moveToPoint(121, 48, 3000, {.maxSpeed = 60});
-  chassis.moveToPoint(121, 24, 3000, {.maxSpeed = 60});
-  chassis.moveToPoint(121, 14, 3000, {.maxSpeed = 50});
-  pros::delay(2000);
+  chassis.moveToPoint(126, 72, 3000, {.maxSpeed = 60});
+  chassis.moveToPoint(120, 48, 3000, {.maxSpeed = 60});
+  chassis.moveToPoint(120, 24, 3000, {.maxSpeed = 60});
+  chassis.moveToPoint(120, 7, 3000, {.maxSpeed = 50});
+  pros::delay(1000);
+  chassis.setPose(120, 8, 180);
+  pros::delay(1000);
   chassis.turnToHeading(-75, 500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
-  chassis.moveToPoint(130, 8, 1000, {.forwards = false, .maxSpeed = 50});
-  pros::delay(500);
-  clamp.set_value(false);
+  chassis.moveToPoint(136, 8, 1000, {.forwards = false, .maxSpeed = 50});
+  unclampGoal();
 
   // SECOND GOAL
 
-  chassis.moveToPoint(72, 24, 2000);
-  chassis.turnToHeading(90, 1000, {.maxSpeed = 80});
-  chassis.moveToPoint(50, 24, 2000, {.forwards = false, .maxSpeed = 50});
-  pros::delay(1000);
-  clamp.set_value(true);
-  pros::delay(500);
+  chassis.moveToPoint(72, 24, 4000, {.maxSpeed = 60});
+  chassis.turnToHeading(90, 1000, {.maxSpeed = 60});
+  chassis.moveToPoint(50, 24, 4000, {.forwards = false, .maxSpeed = 50});
+  clampGoal();
 
-  chassis.moveToPoint(48, 50, 3000);
+  chassis.moveToPoint(48, 48, 3000);
   chassis.moveToPoint(18, 72, 3000, {.maxSpeed = 60});
   chassis.moveToPoint(24, 48, 3000, {.maxSpeed = 60});
   chassis.moveToPoint(24, 24, 3000, {.maxSpeed = 60});
-  chassis.moveToPoint(24, 12, 3000, {.maxSpeed = 60});
+  chassis.moveToPoint(24, 7, 3000, {.maxSpeed = 60});
+  pros::delay(1000);
+  chassis.setPose(24, 8, 180);
+  pros::delay(500);
   chassis.turnToHeading(-45, 500);
   chassis.moveToPoint(12, 24, 1000, {.maxSpeed = 60});
-  pros::delay(2000);
   chassis.turnToHeading(75, 500);
   chassis.moveToPoint(12, 6, 1000, {.forwards = false, .maxSpeed = 60});
-  pros::delay(500);
-  clamp.set_value(false);
+  unclampGoal();
   
   // THIRD GOAL
   chassis.moveToPoint(96, 96, 4000);
   chassis.turnToHeading(135, 500);
   chassis.moveToPoint(72, 120, 3000, {.forwards = false, .maxSpeed = 60});
-  pros::delay(1000);
-  clamp.set_value(true);
-  pros::delay(500);
+  clampGoal();
+
+  chassis.moveToPoint(48, 96, 4000, {.maxSpeed = 60});
+  chassis.moveToPoint(24, 96, 4000, {.maxSpeed = 60});
+  chassis.moveToPoint(24, 120, 4000, {.maxSpeed = 60});
+  chassis.moveToPoint(24, 132, 4000, {.maxSpeed = 60});
+  chassis.turnToHeading(-135, 500);
+  chassis.moveToPoint(12, 120, 4000, {.maxSpeed = 60});
+
+  chassis.moveToPoint(24, 120, 2000);
+  doinker.set_value(true);
+  chassis.turnToPoint(0, 144, 500);
+
+  chassis.turnToHeading(165, 500, {.maxSpeed = 80});
+  chassis.moveToPoint(12, 132, 4000, {.forwards = false, .maxSpeed = 60});
+  unclampGoal();
+  doinker.set_value(false);
 }
