@@ -9,7 +9,7 @@ void clampGoal(){
 }
 
 void unclampGoal(){
-  pros::delay(500);
+  pros::delay(250);
   clamp.set_value(false);
 }
 
@@ -108,8 +108,11 @@ void skillsAuto(){
   chassis.moveToPoint(72, 7, 2000, {.forwards = false, .maxSpeed = 50});
   allianceStake();
 
+  intake.move_voltage(0);
+
   // FIRST GOAL
 
+  /*
   chassis.moveToPoint(72, 22, 1000);
   chassis.turnToHeading(-90, 500);
   clamp.set_value(false);
@@ -118,45 +121,55 @@ void skillsAuto(){
   clampGoal();
 
   chassis.moveToPoint(94, 42, 3000);
-  chassis.moveToPoint(116, 92, 3000, {.maxSpeed = 100});
+  chassis.moveToPoint(118, 90, 3000, {.maxSpeed = 100});
   chassis.moveToPoint(126, 72, 3000, {.maxSpeed = 60});
   chassis.moveToPoint(120, 48, 3000, {.maxSpeed = 60});
   chassis.moveToPoint(120, 24, 3000, {.maxSpeed = 60});
-  chassis.moveToPoint(120, 7, 3000, {.maxSpeed = 50});
   pros::delay(1000);
-  chassis.setPose(120, 8, 180);
+  chassis.moveToPoint(120, 0, 2000, {.maxSpeed = 50});
   pros::delay(1000);
-  chassis.turnToHeading(-75, 500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
-  chassis.moveToPoint(136, 8, 1000, {.forwards = false, .maxSpeed = 50});
+
+  chassis.setPose(120, 10, 180);
+
+  chassis.moveToPoint(120, 10, 4000, {.forwards = false, .maxSpeed = 50});
+  chassis.turnToHeading(-45, 1000, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
+  chassis.moveToPoint(138, 6, 1000, {.forwards = false, .maxSpeed = 50});
+  intake.move_voltage(0);
   unclampGoal();
-
+  */
   // SECOND GOAL
+  intake.move_voltage(12000);
+  chassis.setPose(72, 24, 90);
+  clamp.set_value(false);
 
-  chassis.moveToPoint(72, 24, 4000, {.maxSpeed = 60});
-  chassis.turnToHeading(90, 1000, {.maxSpeed = 60});
+  // chassis.moveToPoint(72, 24, 4000, {.maxSpeed = 60});
+  // chassis.turnToHeading(90, 1000, {.maxSpeed = 60});
   chassis.moveToPoint(50, 24, 4000, {.forwards = false, .maxSpeed = 50});
   clampGoal();
 
   chassis.moveToPoint(48, 48, 3000);
-  chassis.moveToPoint(18, 72, 3000, {.maxSpeed = 60});
-  chassis.moveToPoint(24, 48, 3000, {.maxSpeed = 60});
+  chassis.moveToPoint(15, 72, 3000, {.maxSpeed = 60});
+  chassis.moveToPoint(22, 48, 3000, {.maxSpeed = 60});
   chassis.moveToPoint(24, 24, 3000, {.maxSpeed = 60});
-  chassis.moveToPoint(24, 7, 3000, {.maxSpeed = 60});
+  chassis.moveToPoint(24, 8, 3000, {.maxSpeed = 30});
+  pros::delay(2000);
+  chassis.setPose(24, 10, 180);
+  chassis.turnToHeading(-30, 500);
+  chassis.moveToPoint(8, 24, 4000, {.maxSpeed = 30});
   pros::delay(1000);
-  chassis.setPose(24, 8, 180);
-  pros::delay(500);
-  chassis.turnToHeading(-45, 500);
-  chassis.moveToPoint(12, 24, 1000, {.maxSpeed = 60});
-  chassis.turnToHeading(75, 500);
-  chassis.moveToPoint(12, 6, 1000, {.forwards = false, .maxSpeed = 60});
+  chassis.turnToHeading(15, 1000);
+  chassis.moveToPoint(6, 8, 1000, {.forwards = false, .maxSpeed = 60});
   unclampGoal();
   
   // THIRD GOAL
-  chassis.moveToPoint(96, 96, 4000);
-  chassis.turnToHeading(135, 500);
-  chassis.moveToPoint(72, 120, 3000, {.forwards = false, .maxSpeed = 60});
+  intake.move_voltage(3000);
+  chassis.moveToPoint(90, 90, 4000, {.maxSpeed = 80});
+  chassis.turnToHeading(135, 1000, {.maxSpeed = 60});
+  chassis.moveToPoint(66, 120, 4000, {.forwards = false, .maxSpeed = 50});
   clampGoal();
+  intake.move_voltage(12000);
 
+  chassis.turnToPoint(48, 96, 1000, {.maxSpeed = 60});
   chassis.moveToPoint(48, 96, 4000, {.maxSpeed = 60});
   chassis.moveToPoint(24, 96, 4000, {.maxSpeed = 60});
   chassis.moveToPoint(24, 120, 4000, {.maxSpeed = 60});
@@ -169,7 +182,7 @@ void skillsAuto(){
   chassis.turnToPoint(0, 144, 500);
 
   chassis.turnToHeading(165, 500, {.maxSpeed = 80});
-  chassis.moveToPoint(12, 132, 4000, {.forwards = false, .maxSpeed = 60});
+  chassis.moveToPoint(12, 132, 1000, {.forwards = false, .maxSpeed = 60});
   unclampGoal();
   doinker.set_value(false);
 }
