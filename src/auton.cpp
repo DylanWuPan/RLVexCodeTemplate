@@ -117,11 +117,12 @@ void skillsAuto(){
 
   chassis.moveToPoint(92, 22, 2000, {.forwards = false, .maxSpeed = 50});
   clampGoal();
-  intake.move_voltage(12000);
+  // intake.move_voltage(12000);
 
   chassis.moveToPoint(94, 42, 3000);
   chassis.moveToPoint(118, 90, 3000, {.maxSpeed = 100});
-  chassis.moveToPoint(126, 72, 3000, {.maxSpeed = 60});
+  chassis.moveToPoint(123, 72, 3000, {.maxSpeed = 60});
+  chassis.turnToHeading(180, 1000, {.maxSpeed = 80});
   chassis.moveToPoint(120, 48, 3000, {.maxSpeed = 60});
   chassis.moveToPoint(120, 24, 3000, {.maxSpeed = 60});
   pros::delay(1000);
@@ -132,9 +133,9 @@ void skillsAuto(){
   // chassis.setPose(126, 10, 180); // RED INERTIAL
   // pros::delay(5000); //for tuning - TUNE X ONLY
 
-  chassis.moveToPoint(120, 12, 4000, {.forwards = false, .maxSpeed = 50});
+  chassis.moveToPoint(120, 15, 4000, {.forwards = false, .maxSpeed = 50});
   chassis.turnToHeading(-45, 1000, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
-  chassis.moveToPoint(136, 6, 1000, {.forwards = false, .maxSpeed = 50});
+  chassis.moveToPoint(134, 8, 1000, {.forwards = false, .maxSpeed = 50});
   intake.move_voltage(0);
   unclampGoal();
   
@@ -146,46 +147,53 @@ void skillsAuto(){
   clampGoal();
   intake.move_voltage(12000);
 
-  chassis.moveToPoint(48, 48, 3000);
-  chassis.moveToPoint(12, 72, 3000, {.maxSpeed = 60});
-  chassis.moveToPoint(22, 48, 3000, {.maxSpeed = 60});
-  chassis.moveToPoint(24, 24, 3000, {.maxSpeed = 60});
-  chassis.moveToPoint(24, 0, 3000, {.maxSpeed = 30});
+  chassis.moveToPoint(48, 48, 4000);
+  chassis.moveToPoint(12, 72, 4000, {.maxSpeed = 50});
+  chassis.moveToPoint(21, 48, 4000, {.maxSpeed = 50});
+  chassis.turnToHeading(180, 1000, {.maxSpeed = 80});
+  chassis.moveToPoint(24, 24, 4000, {.maxSpeed = 30});
+  pros::delay(1000);
+  chassis.moveToPoint(24, 0, 4000, {.maxSpeed = 30});
   pros::delay(2000);
 
-  chassis.setPose(25, 10, 180); //Intertial #1
+  chassis.setPose(27, 10, 180); //Intertial #1
   // chassis.setPose(25, 10, 180); //RED INERTIAL
   // pros::delay(5000); //for tuning
 
-  chassis.turnToHeading(-15, 500);
-  chassis.moveToPoint(12, 24, 4000, {.maxSpeed = 30});
+  chassis.turnToHeading(-30, 500);
+  chassis.moveToPoint(8, 24, 4000, {.maxSpeed = 30});
   pros::delay(1000);
   chassis.turnToHeading(15, 1000);
-  chassis.moveToPoint(6, 6, 1000, {.forwards = false, .maxSpeed = 60});
+  chassis.moveToPoint(8, 6, 1000, {.forwards = false, .maxSpeed = 60});
   unclampGoal();
   
   // THIRD GOAL
   intake.move_voltage(6000);
   chassis.moveToPoint(90, 90, 4000, {.maxSpeed = 80});
   chassis.turnToHeading(135, 1000, {.maxSpeed = 60});
-  chassis.moveToPoint(66, 120, 4000, {.forwards = false, .maxSpeed = 50});
+  chassis.moveToPoint(60, 115, 4000, {.forwards = false, .maxSpeed = 50});
   clampGoal();
   intake.move_voltage(12000);
 
   chassis.turnToHeading(-135, 1000, {.maxSpeed = 80});
-  chassis.moveToPoint(48, 90, 4000, {.maxSpeed = 60});
-  chassis.moveToPoint(24, 90, 4000, {.maxSpeed = 60});
+  chassis.moveToPoint(48, 92, 4000, {.maxSpeed = 60});
+  chassis.moveToPoint(25, 92, 4000, {.maxSpeed = 60});
+  chassis.turnToHeading(0, 1000, {.maxSpeed = 80});
   chassis.moveToPoint(24, 120, 4000, {.maxSpeed = 60});
-  chassis.moveToPoint(24, 132, 4000, {.maxSpeed = 30});
-  chassis.turnToHeading(-135, 1000, {.maxSpeed = 60});
-  chassis.moveToPoint(12, 120, 4000, {.maxSpeed = 30});
+  pros::delay(1000);
+  chassis.moveToPoint(24, 144, 4000, {.maxSpeed = 30});
+  pros::delay(1000);
+  chassis.setPose(24, 134, 0);
 
-  chassis.moveToPose(24, 120, -45, 4000, {.maxSpeed = 60});
-  doinker.set_value(true);
-  chassis.turnToPoint(0, 144, 500);
-  chassis.moveToPoint(6, 6, 3000, {.maxSpeed = 60});
-  chassis.turnToHeading(135, 1000, {.maxSpeed = 80});
-  chassis.moveToPoint(6, 138, 1000, {.forwards = false, .maxSpeed = 60});
-  unclampGoal();
-  doinker.set_value(false);
+  // chassis.turnToHeading(-135, 1000, {.maxSpeed = 60});
+  // chassis.moveToPoint(12, 120, 4000, {.maxSpeed = 30});
+
+  // chassis.moveToPose(24, 120, -45, 4000, {.maxSpeed = 60});
+  // doinker.set_value(true);
+  // chassis.turnToPoint(0, 144, 500);
+  // chassis.moveToPoint(6, 6, 3000, {.maxSpeed = 60});
+  // chassis.turnToHeading(135, 1000, {.maxSpeed = 80});
+  // chassis.moveToPoint(6, 138, 1000, {.forwards = false, .maxSpeed = 60});
+  // unclampGoal();
+  // doinker.set_value(false);
 }
