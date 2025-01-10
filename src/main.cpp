@@ -145,7 +145,7 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-  leftAuto();
+  skillsAuto();
 }
 
 void opcontrol() {
