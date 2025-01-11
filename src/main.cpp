@@ -122,7 +122,7 @@ void initialize() {
   chassis.setPose(0, 0, 0);
   rotation_sensor.reset_position();
 
-  skillsAuto();
+  // skillsAuto();
 
   pros::Task screen_task([&]() {
     while (true) {
@@ -145,7 +145,11 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-  skillsAuto();
+  // redLeftAuto(); //1
+  // redRightAuto(); //2
+  // blueLeftAuto(); //3
+  // blueRightAuto(); //4
+  skillsAuto(); //5
 }
 
 void opcontrol() {
@@ -170,7 +174,7 @@ void opcontrol() {
     }
 
     // CLAMP ----------------------------------------------------------------
-    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN)) {
+    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_UP)) {
       clamp.set_value(!ClampValue);
       ClampValue = !ClampValue;
     }
@@ -182,10 +186,10 @@ void opcontrol() {
     }
 
     // HANG ----------------------------------------------------------------
-    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_UP)) {
-      hang.set_value(!HangValue);
-      HangValue = !HangValue;
-    }
+    // if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN)) {
+    //   hang.set_value(!HangValue);
+    //   HangValue = !HangValue;
+    // }
 
     // LADY BROWN ----------------------------------------------------------------
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {

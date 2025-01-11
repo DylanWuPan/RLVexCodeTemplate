@@ -2,7 +2,10 @@
 #define AUTON_HPP
 
 // Function declarations
-void leftAuto();
+void redLeftAuto();
+void redRightAuto();
+void blueLeftAuto();
+void blueRightAuto();
 void skillsAuto();
 
 #endif
