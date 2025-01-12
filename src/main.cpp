@@ -8,6 +8,10 @@
 #include <cmath>
 #include <string>
 
+const int numStates = 2;
+int states[numStates] = {0, 20};
+int LBCurrState = 0;
+int LB_TARGET = 0;
 // enum ALLIANCE {
 //   RED,
 //   BLUE
@@ -72,6 +76,26 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
 //------------------------------------------------------------------------------------------------
 
 //HELPER FUNCTIONS-----------------------------------------------------------------
+void moveLB(float velocity){
+  left_LB.move(velocity);
+  right_LB.move(velocity);
+}
+
+void LBNextState() {
+    LBCurrState += 1;
+    if (LBCurrState == numStates) {
+        LBCurrState = 0;
+    }
+    LB_TARGET = states[LBCurrState];
+}
+
+void LBControl() {
+  double kp = 0.5;
+  double error = LB_TARGET - (rotation_sensor.get_position() / -100.0);
+  double velocity = kp * error;
+  moveLB(velocity);
+}
+
 void setLB(float targetAngle, float voltage) {
   while (true) {
     float currentAngle = rotation_sensor.get_position() / -100.0;
@@ -95,13 +119,6 @@ void setLB(float targetAngle, float voltage) {
   left_LB.move_voltage(0);
   right_LB.move_voltage(0);
 }
-// void LBControl() {
-//   double kp = 0.5;
-//   double error = target - (rotation_sensor.get_position() / -100.0);
-//   double velocity = kp * error;
-//   left_LB.move(velocity);
-//   right_LB.move(velocity);
-// }
 
 // bool rogueRing(){
 //   vision_object_s_t redRing = vision_sensor.get_by_sig(0, RED_RING_SIG);
@@ -123,6 +140,12 @@ void initialize() {
   rotation_sensor.reset_position();
 
   // skillsAuto();
+  pros::Task LBControlTask([]{
+        while (true) {
+            LBControl();
+            pros::delay(10);
+        }
+    });
 
   pros::Task screen_task([&]() {
     while (true) {
@@ -193,7 +216,8 @@ void opcontrol() {
 
     // LADY BROWN ----------------------------------------------------------------
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
-      setLB(20, 2500);
+      // setLB(20, 2500);
+      LBNextState();
     } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
         left_LB.move_voltage(12000);
         right_LB.move_voltage(12000);

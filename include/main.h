@@ -61,6 +61,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+void moveLB(float velocity);
 void setLB(float targetAngle, float voltage);
 void autonomous(void);
 void initialize(void);
