@@ -11,21 +11,21 @@
 bool LB_LOADING = false;
 int LB_LOADING_TARGET = 25;
 
-// enum ALLIANCE {
-//   RED,
-//   BLUE
-// };
-// enum ALLIANCE alliance = BLUE;
+enum ALLIANCE {
+  RED,
+  BLUE
+};
+enum ALLIANCE alliance = BLUE;
 
-//VISION SENSOR SETUP----------------------------------------------------------------
-// #define RED_RING_SIG 1
-// #define BLUE_RING_SIG 2
+// VISION SENSOR SETUP----------------------------------------------------------------
+// #define RED_RING_ID 1
+// #define BLUE_RING_ID 2
 
-// vision_signature_s_t red_ring_sig = signature_from_utility(RED_RING_SIG, 10055, 11099, 10577, -1435, -663, -1049, 3.000, 0);
-// vision_signature_s_t blue_ring_sig = signature_from_utility(BLUE_RING_SIG, -4449, -3891, -4170, 8253, 9579, 8916, 3.000, 0);
+// vision_signature_s_t red_ring_sig = pros::c::vision_signature_from_utility(RED_RING_ID, 10055, 11099, 10577, -1435, -663, -1049, 3.000, 0);
+// vision_signature_s_t blue_ring_sig = pros::c::vision_signature_from_utility(BLUE_RING_ID, -4449, -3891, -4170, 8253, 9579, 8916, 3.000, 0);
 
-// vision_sensor.set_signature(RED_RING_SIG, &red_ring_sig);
-// vision_sensor.set_signature(BLUE_RING_SIG, &blue_ring_sig);
+// vision_sensor.set_signature(RED_RING_ID, &red_ring_sig);
+// vision_sensor.set_signature(BLUE_RING_ID, &blue_ring_sig);
 //----------------------------------------------------------------
   
 //LEMLIB ----------------------------------------------------------------
@@ -161,10 +161,10 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-  redLeftAuto(); //1
+  // redLeftAuto(); //1
   // redRightAuto(); //2
   // blueLeftAuto(); //3
-  // blueRightAuto(); //4
+  blueRightAuto(); //4
   // skillsAuto(); //5
 }
 

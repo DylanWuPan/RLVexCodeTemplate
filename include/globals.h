@@ -16,7 +16,7 @@ extern pros::Controller controller;
 
 extern pros::IMU inertial_sensor; 
 extern pros::Rotation rotation_sensor; 
-// extern pros::Vision vision_sensor;
+extern pros::Vision vision_sensor;
 
 extern pros::adi::DigitalOut clamp;
 extern pros::adi::DigitalOut doinker;

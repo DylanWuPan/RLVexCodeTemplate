@@ -26,9 +26,9 @@ void redLeftAuto(){
   chassis.setPose(60, 13.5, -90);
   pros::delay(300);
 
-  chassis.moveToPoint(72, 13.5, 4000, {.forwards = false, .maxSpeed = 60});
+  chassis.moveToPoint(74, 13.5, 4000, {.forwards = false, .maxSpeed = 60});
   chassis.turnToHeading(0, 500, {.maxSpeed = 60});
-  chassis.moveToPoint(72, 7, 4000, {.forwards = false, .maxSpeed = 50});
+  chassis.moveToPoint(74, 7, 4000, {.forwards = false, .maxSpeed = 50});
 
   allianceStake();
   
@@ -105,36 +105,32 @@ void blueLeftAuto(){
 }
 
 void blueRightAuto(){
-  chassis.setPose(57.5, 13.5, -90);
+  chassis.setPose(82, 13.5, 90);
   pros::delay(300);
 
-  chassis.moveToPoint(75, 13.5, 4000, {.forwards = false});
-  chassis.turnToHeading(0, 500);
-  chassis.moveToPoint(75, 7.5, 4000, {.forwards = false, .maxSpeed = 50});
+  chassis.moveToPoint(70, 13.5, 4000, {.forwards = false, .maxSpeed = 60});
+  chassis.turnToHeading(0, 500, {.maxSpeed = 60});
+  chassis.moveToPoint(70, 7, 4000, {.forwards = false, .maxSpeed = 50});
 
   allianceStake();
   
-  chassis.swingToPoint(72, 48, DriveSide::RIGHT, 500);
+  chassis.swingToPoint(96, 48, DriveSide::RIGHT, 500);
   clamp.set_value(false);
 
-  chassis.moveToPoint(82, 24, 4000);
-  chassis.turnToHeading(150, 1000);
-  chassis.moveToPoint(96, 48, 4000, {.forwards = false, .maxSpeed = 50});
+  chassis.moveToPoint(80, 24, 4000);
+  chassis.turnToHeading(-150, 1000);
+  chassis.moveToPoint(96, 48, 4000, {.forwards = false, .maxSpeed = 60});
   clampGoal();
   
   intake.move_voltage(12000);
-  chassis.moveToPoint(105, 54, 4000, {.maxSpeed = 75});
-  pros::delay(2000);
-  chassis.moveToPoint(116, 50, 4000, {.maxSpeed = 75});
-  pros::delay(2000);
-  chassis.moveToPoint(109, 40, 4000, {.maxSpeed = 75});
-  chassis.moveToPoint(89, 50, 4000);
-
-  left_LB.move_voltage(12000);
-  right_LB.move_voltage(12000);
-  pros::delay(300);
-  left_LB.move_voltage(0);
-  right_LB.move_voltage(0);
+  chassis.moveToPose(106, 62, 60, 4000, {.maxSpeed = 75});
+  pros::delay(1000);
+  chassis.moveToPoint(116, 60, 4000, {.maxSpeed = 75});
+  pros::delay(1500);
+  chassis.moveToPoint(120, 48, 4000, {.maxSpeed = 120});
+  chassis.moveToPose(98, 62, -45, 4000);
+  
+  pros::delay(10000);
 }
 
 void skillsAuto(){

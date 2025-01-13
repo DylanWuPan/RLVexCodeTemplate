@@ -16,7 +16,7 @@ pros::adi::DigitalOut doinker ('C', false);
 
 pros::Controller controller(CONTROLLER_MASTER);
 
-// pros::Vision vision_sensor(17);
+pros::Vision vision_sensor(17);
 
 /*
 COLOR SENSOR SIGS
