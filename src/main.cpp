@@ -8,10 +8,9 @@
 #include <cmath>
 #include <string>
 
-const int numStates = 2;
-int states[numStates] = {0, 20};
-int LBCurrState = 0;
-int LB_TARGET = 0;
+bool LB_LOADING = false;
+int LB_LOADING_TARGET = 25;
+
 // enum ALLIANCE {
 //   RED,
 //   BLUE
@@ -81,19 +80,13 @@ void moveLB(float velocity){
   right_LB.move(velocity);
 }
 
-void LBNextState() {
-    LBCurrState += 1;
-    if (LBCurrState == numStates) {
-        LBCurrState = 0;
-    }
-    LB_TARGET = states[LBCurrState];
-}
-
 void LBControl() {
-  double kp = 0.5;
-  double error = LB_TARGET - (rotation_sensor.get_position() / -100.0);
-  double velocity = kp * error;
-  moveLB(velocity);
+  if(LB_LOADING){
+    double kp = 2;
+    double error = LB_LOADING_TARGET - (rotation_sensor.get_position() / -100.0);
+    double velocity = kp * error;
+    moveLB(velocity);
+  }
 }
 
 void setLB(float targetAngle, float voltage) {
@@ -168,11 +161,11 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-  // redLeftAuto(); //1
+  redLeftAuto(); //1
   // redRightAuto(); //2
   // blueLeftAuto(); //3
   // blueRightAuto(); //4
-  skillsAuto(); //5
+  // skillsAuto(); //5
 }
 
 void opcontrol() {
@@ -189,9 +182,9 @@ void opcontrol() {
 
     // INTAKE ----------------------------------------------------------------
     if (controller.get_digital(E_CONTROLLER_DIGITAL_R1)) {
-        intake.move_voltage(20000);
+      intake.move_voltage(20000);
     } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R2)){
-        intake.move_voltage(-20000);
+      intake.move_voltage(-20000);
     } else {
       intake.move_voltage(0);
     }
@@ -217,11 +210,13 @@ void opcontrol() {
     // LADY BROWN ----------------------------------------------------------------
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
       // setLB(20, 2500);
-      LBNextState();
+      LB_LOADING = true;
     } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+        LB_LOADING = false;
         left_LB.move_voltage(12000);
         right_LB.move_voltage(12000);
     } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+        LB_LOADING = false;
         left_LB.move_voltage(-12000);
         right_LB.move_voltage(-12000);
     } else {
