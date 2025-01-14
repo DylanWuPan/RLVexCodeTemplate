@@ -71,14 +71,15 @@ void redRightAuto(){
   //----------------------------------------------------------------  
 
   clamp.set_value(false);
-  intake.move_voltage(8000);
+  intake.move_voltage(12000);
   chassis.moveToPoint(118, 48, 4000, {.maxSpeed = 80});
-  chassis.turnToHeading(90, 1000, {.direction = AngularDirection::CW_CLOCKWISE});
-
+  chassis.turnToHeading(90, 1000);
 
   chassis.moveToPoint(90, 48, 4000, {.forwards = false, .maxSpeed = 60});
+  intake.move_voltage(0);
   clampGoal();
-  pros::delay(250);
+  intake.move_voltage(12000);
+  pros::delay(750);
   intake.move_voltage(0);
   unclampGoal();
 
@@ -96,35 +97,40 @@ void redRightAuto(){
 }
 
 void blueLeftAuto(){
-  chassis.setPose(57.5, 13.5, -90);
+  chassis.setPose(60, 13.5, -90);
   pros::delay(300);
 
-  chassis.moveToPoint(75, 13.5, 4000, {.forwards = false});
-  chassis.turnToHeading(0, 500);
-  chassis.moveToPoint(75, 7.5, 4000, {.forwards = false, .maxSpeed = 50});
+  chassis.moveToPoint(72, 13.5, 4000, {.forwards = false, .maxSpeed = 60});
+  chassis.turnToHeading(0, 500, {.maxSpeed = 60});
+  chassis.moveToPoint(72, 7, 4000, {.forwards = false, .maxSpeed = 50});
 
   allianceStake();
   
-  chassis.swingToPoint(48, 48, DriveSide::LEFT, 500);
+  chassis.swingToPoint(24, 48, DriveSide::LEFT, 500);
   clamp.set_value(false);
-  chassis.moveToPoint(60, 24, 4000);
-  chassis.turnToHeading(150, 1000);
-  chassis.moveToPoint(48, 48, 4000, {.forwards = false, .maxSpeed = 50});
-  
-  clampGoal();
-
   intake.move_voltage(12000);
-  chassis.moveToPoint(24, 48, 4000, {.maxSpeed = 75});
-  pros::delay(2000);
-  chassis.moveToPoint(24, 24, 4000, {.maxSpeed = 75});
-  pros::delay(2000);
-  chassis.moveToPoint(55, 50, 4000);
+  chassis.moveToPoint(22, 48, 4000, {.maxSpeed = 80});
+  chassis.turnToHeading(-90, 1000);
 
-  left_LB.move_voltage(12000);
-  right_LB.move_voltage(12000);
-  pros::delay(300);
-  left_LB.move_voltage(0);
-  right_LB.move_voltage(0);
+  chassis.moveToPoint(52, 48, 4000, {.forwards = false, .maxSpeed = 60});
+  intake.move_voltage(0);
+  clampGoal();
+  intake.move_voltage(12000);
+  pros::delay(750);
+  unclampGoal();
+  intake.move_voltage(0);
+
+  chassis.moveToPoint(24, 48, 4000, {.maxSpeed = 100});
+
+  chassis.turnToHeading(180, 1000);
+  chassis.moveToPoint(24, 61, 4000, {.forwards = false, .maxSpeed = 60});
+  clampGoal();
+  intake.move_voltage(12000);
+
+  chassis.moveToPoint(24, 45, 4000);
+  chassis.moveToPose(46, 62, 45, 4000);
+
+  pros::delay(10000);
 }
 
 void blueRightAuto(){

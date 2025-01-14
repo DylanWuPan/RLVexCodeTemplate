@@ -151,8 +151,8 @@ void competition_initialize() {}
 
 void autonomous() {
   // redLeftAuto(); //1
-  redRightAuto(); //2
-  // blueLeftAuto(); //3
+  // redRightAuto(); //2
+  blueLeftAuto(); //3
   // blueRightAuto(); //4
   // skillsAuto(); //5
 }
