@@ -52,24 +52,47 @@ void redLeftAuto(){
 }
 
 void redRightAuto(){
-  chassis.setPose(96, 10, 180);
+  //NO ALLIANCE STAKE----------------------------------------------------------------
+  // chassis.setPose(96, 10, 180);
+  // pros::delay(300);
+
+  //ALLIANCE STAKE----------------------------------------------------------------
+  chassis.setPose(82, 13.5, 90);
   pros::delay(300);
+
+  chassis.moveToPoint(70, 13.5, 4000, {.forwards = false, .maxSpeed = 60});
+  chassis.turnToHeading(0, 500, {.maxSpeed = 60});
+  chassis.moveToPoint(70, 7, 4000, {.forwards = false, .maxSpeed = 50});
+
+  allianceStake();
+  
+  chassis.swingToPoint(120, 48, DriveSide::RIGHT, 500);
+
+  //----------------------------------------------------------------  
 
   clamp.set_value(false);
-  chassis.moveToPoint(96, 48, 4000, {.forwards = false, .maxSpeed = 60});
-  pros::delay(500);
+  intake.move_voltage(8000);
+  chassis.moveToPoint(118, 48, 4000, {.maxSpeed = 80});
+  chassis.turnToHeading(90, 1000, {.direction = AngularDirection::CW_CLOCKWISE});
+
+
+  chassis.moveToPoint(90, 48, 4000, {.forwards = false, .maxSpeed = 60});
   clampGoal();
-  intake.move_voltage(12000);
+  pros::delay(250);
+  intake.move_voltage(0);
+  unclampGoal();
 
-  chassis.moveToPoint(120, 48, 4000, {.maxSpeed = 80});
-  chassis.moveToPoint(120, 24, 4000, {.maxSpeed = 80});
-  chassis.moveToPoint(68, 54, 4000);
+  chassis.moveToPoint(120, 48, 4000, {.maxSpeed = 100});
 
-  left_LB.move_voltage(12000);
-  right_LB.move_voltage(12000);
-  pros::delay(300);
-  left_LB.move_voltage(0);
-  right_LB.move_voltage(0);
+  chassis.turnToHeading(180, 1000);
+  chassis.moveToPoint(120, 62, 4000, {.forwards = false, .maxSpeed = 60});
+  clampGoal();
+
+  chassis.moveToPoint(120, 45, 4000);
+  chassis.moveToPose(90, 62, -45, 4000);
+
+  pros::delay(10000);
+
 }
 
 void blueLeftAuto(){

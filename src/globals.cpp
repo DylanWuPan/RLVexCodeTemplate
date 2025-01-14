@@ -16,7 +16,18 @@ pros::adi::DigitalOut doinker ('C', false);
 
 pros::Controller controller(CONTROLLER_MASTER);
 
-pros::Vision vision_sensor(17);
+pros::Vision visionSensor(17);
+
+// VISION SENSOR SETUP----------------------------------------------------------------
+// #define RED_RING_ID 1
+// #define BLUE_RING_ID 2
+
+// vision_signature_s_t red_ring_sig = signature_from_utility(RED_RING_ID, 10055, 11099, 10577, -1435, -663, -1049, 3.000, 0);
+// vision_signature_s_t blue_ring_sig = signature_from_utility(BLUE_RING_ID, -4449, -3891, -4170, 8253, 9579, 8916, 3.000, 0);
+
+// visionSensor.set_signature(RED_RING_ID, &vision_signature_from_utility(RED_RING_ID, 10055, 11099, 10577, -1435, -663, -1049, 3.000, 0));
+// visionSensor.set_signature(BLUE_RING_ID, &vision_signature_from_utility(BLUE_RING_ID, -4449, -3891, -4170, 8253, 9579, 8916, 3.000, 0));
+//----------------------------------------------------------------
 
 /*
 COLOR SENSOR SIGS
