@@ -71,7 +71,7 @@ void redRightAuto(){
   //----------------------------------------------------------------  
 
   clamp.set_value(false);
-  intake.move_voltage(12000);
+  intake.move_voltage(8000);
   chassis.moveToPoint(118, 48, 4000, {.maxSpeed = 80});
   chassis.turnToHeading(90, 1000);
 
@@ -83,11 +83,12 @@ void redRightAuto(){
   intake.move_voltage(0);
   unclampGoal();
 
-  chassis.moveToPoint(120, 48, 4000, {.maxSpeed = 100});
+  chassis.moveToPoint(120, 52, 4000, {.maxSpeed = 100});
 
   chassis.turnToHeading(180, 1000);
   chassis.moveToPoint(120, 62, 4000, {.forwards = false, .maxSpeed = 60});
   clampGoal();
+  intake.move_voltage(12000);
 
   chassis.moveToPoint(120, 45, 4000);
   chassis.moveToPose(90, 62, -45, 4000);
@@ -108,7 +109,7 @@ void blueLeftAuto(){
   
   chassis.swingToPoint(24, 48, DriveSide::LEFT, 500);
   clamp.set_value(false);
-  intake.move_voltage(12000);
+  intake.move_voltage(8000);
   chassis.moveToPoint(22, 48, 4000, {.maxSpeed = 80});
   chassis.turnToHeading(-90, 1000);
 

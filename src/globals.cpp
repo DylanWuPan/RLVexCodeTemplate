@@ -1,11 +1,25 @@
 #include "main.h"
 
-pros::MotorGroup left_drivetrain({-9, -5, 12}, pros::v5::MotorGears::blue, pros::v5::MotorUnits::degrees);
-pros::MotorGroup right_drivetrain({7, 2, -11}, pros::v5::MotorGears::blue, pros::v5::MotorUnits::degrees);
+//PORTS
+#define RIGHT_DRIVETRAIN_FRONT_PORT 2
+#define RIGHT_DRIVETRAIN_MIDDLE_PORT 3
+#define RIGHT_DRIVETRAIN_BACK_PORT 7
+
+#define LEFT_DRIVETRAIN_FRONT_PORT 8
+#define LEFT_DRIVETRAIN_MIDDLE_PORT 9
+#define LEFT_DRIVETRAIN_BACK_PORT 10
+
+#define INTAKE_PORT 12
+#define HOOK_CHAIN_PORT 
+
+
+
+pros::MotorGroup left_drivetrain({- LEFT_DRIVETRAIN_FRONT_PORT, - LEFT_DRIVETRAIN_MIDDLE_PORT, LEFT_DRIVETRAIN_MIDDLE_PORT}, pros::v5::MotorGears::blue, pros::v5::MotorUnits::degrees);
+pros::MotorGroup right_drivetrain({ RIGHT_DRIVETRAIN_FRONT_PORT, RIGHT_DRIVETRAIN_MIDDLE_PORT, - RIGHT_DRIVETRAIN_BACK_PORT}, pros::v5::MotorGears::blue, pros::v5::MotorUnits::degrees);
 
 pros::Motor intake(10, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 pros::Motor left_LB(-13, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
-pros::Motor right_LB(3, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+pros::Motor right_LB(20, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 
 pros::Rotation rotation_sensor(17);
 pros::Imu inertial_sensor(1);
