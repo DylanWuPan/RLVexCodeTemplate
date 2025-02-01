@@ -8,15 +8,15 @@ using namespace pros::v5;
 extern pros::MotorGroup left_drivetrain;
 extern pros::MotorGroup right_drivetrain;
 
-extern pros::Motor left_LB;
-extern pros::Motor right_LB;
+extern pros::Motor ladybrown;
 extern pros::Motor intake;
+extern pros::Motor hooks;
 
 extern pros::Controller controller;
 
-extern pros::IMU inertial_sensor; 
-extern pros::Rotation rotation_sensor; 
-extern pros::Vision vision_sensor;
+extern pros::IMU inertial; 
+extern pros::Rotation rotation; 
+extern pros::Optical optical;
 
 extern pros::adi::DigitalOut clamp;
 extern pros::adi::DigitalOut doinker;

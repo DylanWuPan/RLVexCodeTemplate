@@ -63,6 +63,8 @@ extern "C" {
 #endif
 void moveLB(float velocity);
 void setLB(float targetAngle, float voltage);
+void LBControl(void);
+void colorSort(void);
 void autonomous(void);
 void initialize(void);
 void disabled(void);

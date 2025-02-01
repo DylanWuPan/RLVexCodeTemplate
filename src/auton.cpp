@@ -271,6 +271,7 @@ void skillsAuto(){
   pros::delay(10000);
 }
 
+/*
 void skillsAutoWithLB(){
   chassis.setPose(72, 9, 0);
 
@@ -317,3 +318,4 @@ void skillsAutoWithLB(){
   pros::delay(1000);
   setLB(0, 12000);
 }
+*/

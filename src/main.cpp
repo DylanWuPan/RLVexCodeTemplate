@@ -11,16 +11,16 @@
 bool LB_LOADING = false;
 int LB_LOADING_TARGET = 25;
 
-enum ALLIANCE {
+enum Alliance {
   RED,
   BLUE
 };
-enum ALLIANCE alliance = BLUE;
+enum Alliance ALLIANCE = BLUE;
   
 //LEMLIB ----------------------------------------------------------------
 lemlib::Drivetrain drivetrain(&left_drivetrain, // left motor group
                               &right_drivetrain, // right motor group
-                              13.25, // track width
+                              10.625, // track width
                               lemlib::Omniwheel::NEW_325, //wheels
                               450, //drivetrain rpm
                               2 // horizontal drift
@@ -30,28 +30,50 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to null
                             nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
                             nullptr, // horizontal tracking wheel 1
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
-                            &inertial_sensor // inertial sensor
+                            &inertial // inertial sensor
 );
 
-lemlib::ControllerSettings lateral_controller(15, // proportional gain (kP)
+// lemlib::ControllerSettings lateral_controller(15, // proportional gain (kP)
+//                                               0, // integral gain (kI)
+//                                               100, // derivative gain (kD)
+//                                               3, // anti windup
+//                                               1, // small error range, in inches
+//                                               100, // small error range timeout, in milliseconds
+//                                               3, // large error range, in inches
+//                                               500, // large error range timeout, in milliseconds
+//                                               20 // maximum acceleration (slew)
+// );
+
+lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              100, // derivative gain (kD)
-                                              3, // anti windup
-                                              1, // small error range, in inches
-                                              100, // small error range timeout, in milliseconds
-                                              3, // large error range, in inches
-                                              500, // large error range timeout, in milliseconds
-                                              20 // maximum acceleration (slew)
+                                              3, // derivative gain (kD)
+                                              0, // anti windup
+                                              0, // small error range, in inches
+                                              0, // small error range timeout, in milliseconds
+                                              0, // large error range, in inches
+                                              0, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
 );
 
-lemlib::ControllerSettings angular_controller(2.5, // proportional gain (kP)
+// lemlib::ControllerSettings angular_controller(2.5, // proportional gain (kP)
+//                                               0, // integral gain (kI)
+//                                               10, // derivative gain (kD)
+//                                               3, // anti windup
+//                                               1, // small error range, in degrees
+//                                               100, // small error range timeout, in milliseconds
+//                                               3, // large error range, in degrees
+//                                               500, // large error range timeout, in milliseconds
+//                                               0 // maximum acceleration (slew)
+// );
+
+lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
                                               0, // integral gain (kI)
                                               10, // derivative gain (kD)
-                                              3, // anti windup
-                                              1, // small error range, in degrees
-                                              100, // small error range timeout, in milliseconds
-                                              3, // large error range, in degrees
-                                              500, // large error range timeout, in milliseconds
+                                              0, // anti windup
+                                              0, // small error range, in inches
+                                              0, // small error range timeout, in milliseconds
+                                              0, // large error range, in inches
+                                              0, // large error range timeout, in milliseconds
                                               0 // maximum acceleration (slew)
 );
 
@@ -65,14 +87,13 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
 
 //HELPER FUNCTIONS-----------------------------------------------------------------
 void moveLB(float velocity){
-  left_LB.move(velocity);
-  right_LB.move(velocity);
+  ladybrown.move(velocity);
 }
 
 void LBControl() {
   if(LB_LOADING){
     double kp = 2;
-    double error = LB_LOADING_TARGET - (rotation_sensor.get_position() / -100.0);
+    double error = LB_LOADING_TARGET - (rotation.get_position() / -100.0);
     double velocity = kp * error;
     moveLB(velocity);
   }
@@ -80,7 +101,7 @@ void LBControl() {
 
 void setLB(float targetAngle, float voltage) {
   while (true) {
-    float currentAngle = rotation_sensor.get_position() / -100.0;
+    float currentAngle = rotation.get_position() / -100.0;
 
     float error = targetAngle - currentAngle;
 
@@ -89,45 +110,54 @@ void setLB(float targetAngle, float voltage) {
     }
 
     if (error > 0) { 
-      left_LB.move_voltage(voltage);
-      right_LB.move_voltage(voltage);
+      ladybrown.move_voltage(voltage);
     } else { 
-      left_LB.move_voltage(-voltage);
-      right_LB.move_voltage(-voltage);
+      ladybrown.move_voltage(-voltage);
     }
 
     pros::delay(10);
   }
-  left_LB.move_voltage(0);
-  right_LB.move_voltage(0);
+  ladybrown.move_voltage(0);
 }
 
-// bool rogueRing(){
-//   vision_object_s_t redRing = vision_sensor.get_by_sig(0, RED_RING_SIG);
-//   vision_object_s_t blueRing = vision_sensor.get_by_sig(0, BLUE_RING_SIG);
-
-//   switch(alliance){
-//     case RED:
-//       return blueRing.signature != 0;
-//     case BLUE:
-//       return redRing.signature != 0;
-//   }
-// }
-//----------------------------------------------------------------
+void colorSort() {
+  switch(ALLIANCE){
+    case RED:
+      if(optical.get_hue() > 100){
+        pros::delay(150);
+        hooks.move_voltage(0);
+        pros::delay(150);
+      }
+    case BLUE:
+      if(optical.get_hue() < 30){
+        pros::delay(150);
+        hooks.move_voltage(0);
+        pros::delay(150);
+      }
+  }
+}
 
 void initialize() {
   pros::lcd::initialize(); // initialize brain screen
 	chassis.calibrate(); // calibrate sensors
   chassis.setPose(0, 0, 0);
-  rotation_sensor.reset_position();
+  rotation.reset_position();
 
-  // skillsAuto();
+  // chassis.turnToHeading(90, 10000);
+
   pros::Task LBControlTask([]{
         while (true) {
             LBControl();
             pros::delay(10);
         }
     });
+
+  // pros::Task ColorSortTask([]{
+  //       while (true) {
+  //           ColorSort();
+  //           pros::delay(50);
+  //       }
+  //   });
 
   pros::Task screen_task([&]() {
     while (true) {
@@ -136,8 +166,8 @@ void initialize() {
         pros::lcd::print(0, "X: %f", robotPos.x); // x
         pros::lcd::print(1, "Y: %f", robotPos.y); // y
         pros::lcd::print(2, "Theta: %f", robotPos.theta); // heading
-        pros::lcd::print(3, "LB: %f", rotation_sensor.get_position() / -100.0); // rotation
-        // pros::lcd::print(4, "COLOR SORTING: %s", rogueRing() ? "ROGUE!" : "normal"); // color sorting
+        pros::lcd::print(3, "LB: %f", rotation.get_position() / -100.0); // rotation
+        pros::lcd::print(4, "OPTICAL SENSOR: %f", optical.get_hue()); // color sorting
         
         // delay to save resources
         pros::delay(20);
@@ -169,13 +199,16 @@ void opcontrol() {
 
 		chassis.tank(LeftY, RightY);
 
-    // INTAKE ----------------------------------------------------------------
+    // INTAKE/HOOKS ----------------------------------------------------------------
     if (controller.get_digital(E_CONTROLLER_DIGITAL_R1)) {
-      intake.move_voltage(20000);
+      intake.move_voltage(12000);
+      hooks.move_voltage(12000);
     } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R2)){
       intake.move_voltage(-20000);
+      hooks.move_voltage(-12000);
     } else {
       intake.move_voltage(0);
+      hooks.move_voltage(0);
     }
 
     // CLAMP ----------------------------------------------------------------
@@ -202,15 +235,12 @@ void opcontrol() {
       LB_LOADING = true;
     } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
         LB_LOADING = false;
-        left_LB.move_voltage(12000);
-        right_LB.move_voltage(12000);
+        ladybrown.move_voltage(12000);
     } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
         LB_LOADING = false;
-        left_LB.move_voltage(-12000);
-        right_LB.move_voltage(-12000);
+        ladybrown.move_voltage(-12000);
     } else {
-      left_LB.move_voltage(0);
-      right_LB.move_voltage(0);
+      ladybrown.move_voltage(0);
     }
     pros::delay(20);
   }
