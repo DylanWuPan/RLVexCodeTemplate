@@ -9,7 +9,7 @@
 #include <string>
 
 bool LB_LOADING = false;
-int LB_LOADING_TARGET = 25;
+int LB_LOADING_TARGET = 158;
 
 enum Alliance {
   RED,
@@ -33,49 +33,49 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to null
                             &inertial // inertial sensor
 );
 
-// lemlib::ControllerSettings lateral_controller(15, // proportional gain (kP)
-//                                               0, // integral gain (kI)
-//                                               100, // derivative gain (kD)
-//                                               3, // anti windup
-//                                               1, // small error range, in inches
-//                                               100, // small error range timeout, in milliseconds
-//                                               3, // large error range, in inches
-//                                               500, // large error range timeout, in milliseconds
-//                                               20 // maximum acceleration (slew)
-// );
-
-lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
+lemlib::ControllerSettings lateral_controller(15, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              3, // derivative gain (kD)
-                                              0, // anti windup
-                                              0, // small error range, in inches
-                                              0, // small error range timeout, in milliseconds
-                                              0, // large error range, in inches
-                                              0, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
+                                              100, // derivative gain (kD)
+                                              3, // anti windup
+                                              1, // small error range, in inches
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in inches
+                                              500, // large error range timeout, in milliseconds
+                                              20 // maximum acceleration (slew)
 );
 
-// lemlib::ControllerSettings angular_controller(2.5, // proportional gain (kP)
+// lemlib::ControlelerSettings lateral_controller(10, // proportional gain (kP)
 //                                               0, // integral gain (kI)
-//                                               10, // derivative gain (kD)
-//                                               3, // anti windup
-//                                               1, // small error range, in degrees
-//                                               100, // small error range timeout, in milliseconds
-//                                               3, // large error range, in degrees
-//                                               500, // large error range timeout, in milliseconds
+//                                               3, // derivative gain (kD)
+//                                               0, // anti windup
+//                                               0, // small error range, in inches
+//                                               0, // small error range timeout, in milliseconds
+//                                               0, // large error range, in inches
+//                                               0, // large error range timeout, in milliseconds
 //                                               0 // maximum acceleration (slew)
 // );
 
-lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
+lemlib::ControllerSettings angular_controller(2.5, // proportional gain (kP)
                                               0, // integral gain (kI)
                                               10, // derivative gain (kD)
-                                              0, // anti windup
-                                              0, // small error range, in inches
-                                              0, // small error range timeout, in milliseconds
-                                              0, // large error range, in inches
-                                              0, // large error range timeout, in milliseconds
+                                              3, // anti windup
+                                              1, // small error range, in degrees
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in degrees
+                                              500, // large error range timeout, in milliseconds
                                               0 // maximum acceleration (slew)
 );
+
+// lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
+//                                               0, // integral gain (kI)
+//                                               10, // derivative gain (kD)
+//                                               0, // anti windup
+//                                               0, // small error range, in inches
+//                                               0, // small error range timeout, in milliseconds
+//                                               0, // large error range, in inches
+//                                               0, // large error range timeout, in milliseconds
+//                                               0 // maximum acceleration (slew)
+// );
 
 lemlib::Chassis chassis(drivetrain, // drivetrain settings
                         lateral_controller, // lateral PID settings
@@ -92,7 +92,7 @@ void moveLB(float velocity){
 
 void LBControl() {
   if(LB_LOADING){
-    double kp = 2;
+    double kp = 0.5;
     double error = LB_LOADING_TARGET - (rotation.get_position() / -100.0);
     double velocity = kp * error;
     moveLB(velocity);
@@ -166,7 +166,7 @@ void initialize() {
         pros::lcd::print(0, "X: %f", robotPos.x); // x
         pros::lcd::print(1, "Y: %f", robotPos.y); // y
         pros::lcd::print(2, "Theta: %f", robotPos.theta); // heading
-        pros::lcd::print(3, "LB: %f", rotation.get_position() / -100.0); // rotation
+        pros::lcd::print(3, "LB: %ldss", rotation.get_position()/-100); // rotation
         pros::lcd::print(4, "OPTICAL SENSOR: %f", optical.get_hue()); // color sorting
         
         // delay to save resources
@@ -180,11 +180,11 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-  redLeftAuto(); //1
-  // redRightAuto(); //2
+    // redLeftAuto(); //1
+    // redRightAuto(); //2
   // blueLeftAuto(); //3
-  // blueRightAuto(); //4
-  // skillsAuto(); //5
+    blueRightAuto(); //4
+    // skillsAuto(); //5
 }
 
 void opcontrol() {

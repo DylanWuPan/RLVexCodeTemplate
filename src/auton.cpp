@@ -6,23 +6,25 @@ const int TURN_SPEED = 80;
 
 void clampGoal(){
   pros::delay(1250);
-  clamp.set_value(true);
+  clamp.set_value(false);
   pros::delay(500);
 }
 
 void unclampGoal(){
   pros::delay(250);
-  clamp.set_value(false);
+  clamp.set_value(true);
 }
 
 void allianceStake(){
   pros::delay(500);
   intake.move_voltage(12000);
+  hooks.move_voltage(12000);
   pros::delay(500);
   intake.move_voltage(0);
 }
 
 void redLeftAuto(){
+  pros::delay(3000);
   chassis.setPose(60, 13.5, -90);
   pros::delay(300);
 
@@ -33,20 +35,25 @@ void redLeftAuto(){
   allianceStake();
   
   chassis.swingToPoint(48, 48, DriveSide::LEFT, 500);
-  clamp.set_value(false);
+  clamp.set_value(true);
   chassis.moveToPoint(60, 24, 4000);
   chassis.turnToHeading(150, 1000);
   chassis.moveToPoint(48, 48, 4000, {.forwards = false, .maxSpeed = 60});
   clampGoal();
   
   intake.move_voltage(12000);
-  chassis.moveToPoint(39, 54, 4000, {.maxSpeed = 75});
+  hooks.move_voltage(12000);
+  chassis.moveToPoint(39, 45, 4000, {.maxSpeed = 75});
   pros::delay(1000);
-  chassis.moveToPoint(25, 50, 4000, {.maxSpeed = 75});
+  chassis.moveToPoint(25, 45, 4000, {.maxSpeed = 75});
   pros::delay(1500);
   chassis.turnToHeading(150, 1000);
+  // intake.move_voltage(0);
+  // hooks.move_voltage(0);
   chassis.moveToPoint(30, 48, 4000, {.maxSpeed = 75});
   chassis.moveToPose(50, 54, 45, 4000);
+  pros::delay(1000);
+  ladybrown.move_voltage(6000);
   
   pros::delay(10000);
 }
@@ -55,8 +62,11 @@ void redRightAuto(){
   //NO ALLIANCE STAKE----------------------------------------------------------------
   // chassis.setPose(96, 10, 180);
   // pros::delay(300);
+  // chassis.setPose(0,0,0);
+  // pros::delay(300);
 
-  //ALLIANCE STAKE----------------------------------------------------------------
+  // chassis.moveToPoint(0, 28, 4000, {.forwards = false, .maxSpeed = 60});
+  // ALLIANCE STAKE----------------------------------------------------------------
   chassis.setPose(82, 13.5, 90);
   pros::delay(300);
 
@@ -134,9 +144,14 @@ void blueLeftAuto(){
   pros::delay(10000);
 }
 
+// void newRedRight(){
+  
+
+// }
+
 void blueRightAuto(){
   chassis.setPose(82, 13.5, 90);
-  pros::delay(300);
+  pros::delay(500);
 
   chassis.moveToPoint(70, 13.5, 4000, {.forwards = false, .maxSpeed = 60});
   chassis.turnToHeading(0, 500, {.maxSpeed = 60});
@@ -145,17 +160,17 @@ void blueRightAuto(){
   allianceStake();
   
   chassis.swingToPoint(96, 48, DriveSide::RIGHT, 500);
-  clamp.set_value(false);
+  clamp.set_value(true);
 
   chassis.moveToPoint(80, 24, 4000);
   chassis.turnToHeading(-150, 1000);
-  chassis.moveToPoint(96, 48, 4000, {.forwards = false, .maxSpeed = 60});
+  chassis.moveToPoint(102, 57, 4000, {.forwards = false, .maxSpeed = 60});
   clampGoal();
   
   intake.move_voltage(12000);
-  chassis.moveToPose(106, 62, 60, 4000, {.maxSpeed = 75});
+  chassis.moveToPose(106, 69, 62, 4000, {.maxSpeed = 75});
   pros::delay(1000);
-  chassis.moveToPoint(116, 60, 4000, {.maxSpeed = 75});
+  chassis.moveToPoint(116, 70, 4000, {.maxSpeed = 75});
   pros::delay(1500);
   chassis.moveToPoint(120, 48, 4000, {.maxSpeed = 120});
   chassis.moveToPose(98, 62, -45, 4000);
@@ -164,16 +179,16 @@ void blueRightAuto(){
 }
 
 void skillsAuto(){
-  chassis.setPose(72, 9, 0);
-  pros::delay(300);
-  chassis.moveToPoint(72, 7, 2000, {.forwards = false, .maxSpeed = 50});
+  chassis.setPose(72, 10, 0);
+  // pros::delay(300);
+  // chassis.moveToPoint(72, 7, 2000, {.forwards = false, .maxSpeed = 50});
   allianceStake();
 
   // FIRST GOAL
 
-  chassis.moveToPoint(72, 22, 1000);
+  chassis.moveToPoint(72, 20, 1000);
   chassis.turnToHeading(-90, 500);
-  clamp.set_value(false);
+  clamp.set_value(true);
 
   chassis.moveToPoint(92, 22, 2000, {.forwards = false, .maxSpeed = 50});
   clampGoal();
