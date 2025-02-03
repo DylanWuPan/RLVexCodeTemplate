@@ -9,13 +9,14 @@
 #include <string>
 
 bool LB_LOADING = false;
-int LB_LOADING_TARGET = 158;
+int LB_LOADING_TARGET = 135;
 
 enum Alliance {
   RED,
   BLUE
 };
-enum Alliance ALLIANCE = BLUE;
+Alliance ALLIANCE = BLUE;
+bool ROGUE_RING = false;
   
 //LEMLIB ----------------------------------------------------------------
 lemlib::Drivetrain drivetrain(&left_drivetrain, // left motor group
@@ -99,41 +100,22 @@ void LBControl() {
   }
 }
 
-void setLB(float targetAngle, float voltage) {
-  while (true) {
-    float currentAngle = rotation.get_position() / -100.0;
-
-    float error = targetAngle - currentAngle;
-
-    if (fabs(error) <= 1) {
-      break;
-    }
-
-    if (error > 0) { 
-      ladybrown.move_voltage(voltage);
-    } else { 
-      ladybrown.move_voltage(-voltage);
-    }
-
-    pros::delay(10);
-  }
-  ladybrown.move_voltage(0);
-}
-
 void colorSort() {
   switch(ALLIANCE){
     case RED:
-      if(optical.get_hue() > 100){
-        pros::delay(150);
-        hooks.move_voltage(0);
-        pros::delay(150);
+      if(optical.get_hue() > 150){
+        ROGUE_RING = true;
+      } else{
+        ROGUE_RING = false;
       }
+      break;
     case BLUE:
       if(optical.get_hue() < 30){
-        pros::delay(150);
-        hooks.move_voltage(0);
-        pros::delay(150);
+        ROGUE_RING = true;
+      } else{
+        ROGUE_RING = false;
       }
+      break;
   }
 }
 
@@ -152,12 +134,12 @@ void initialize() {
         }
     });
 
-  // pros::Task ColorSortTask([]{
-  //       while (true) {
-  //           ColorSort();
-  //           pros::delay(50);
-  //       }
-  //   });
+  pros::Task ColorSortTask([]{
+        while (true) {
+            colorSort();
+            pros::delay(10);
+        }
+    });
 
   pros::Task screen_task([&]() {
     while (true) {
@@ -166,8 +148,9 @@ void initialize() {
         pros::lcd::print(0, "X: %f", robotPos.x); // x
         pros::lcd::print(1, "Y: %f", robotPos.y); // y
         pros::lcd::print(2, "Theta: %f", robotPos.theta); // heading
-        pros::lcd::print(3, "LB: %ldss", rotation.get_position()/-100); // rotation
+        pros::lcd::print(3, "LB: %ld", rotation.get_position()/-100); // rotation
         pros::lcd::print(4, "OPTICAL SENSOR: %f", optical.get_hue()); // color sorting
+        pros::lcd::print(5, "ROGUE RING: %d", ROGUE_RING); // color sorting
         
         // delay to save resources
         pros::delay(20);
@@ -200,7 +183,11 @@ void opcontrol() {
 		chassis.tank(LeftY, RightY);
 
     // INTAKE/HOOKS ----------------------------------------------------------------
-    if (controller.get_digital(E_CONTROLLER_DIGITAL_R1)) {
+    if(ROGUE_RING){
+      pros::delay(120);
+      hooks.move_voltage(0);
+      ROGUE_RING = false;
+    } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R1)) {
       intake.move_voltage(12000);
       hooks.move_voltage(12000);
     } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R2)){

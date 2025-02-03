@@ -29,10 +29,10 @@ pros::Motor ladybrown(11, pros::v5::MotorGears::green, pros::v5::MotorUnits::deg
 
 pros::Rotation rotation(18);
 pros::Imu inertial(21);
-pros::Optical optical(11);
+pros::Optical optical(13);
 
 pros::adi::DigitalOut hang ('B', false);
-pros::adi::DigitalOut clamp ('A', true);
+pros::adi::DigitalOut clamp ('A', false);
 pros::adi::DigitalOut doinker ('C', false);
 
 pros::Controller controller(CONTROLLER_MASTER);
