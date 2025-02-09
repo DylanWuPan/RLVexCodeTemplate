@@ -7,6 +7,8 @@ using namespace pros::v5;
 
 extern pros::MotorGroup left_drivetrain;
 extern pros::MotorGroup right_drivetrain;
+extern pros::Rotation vertical_tracking;
+extern pros::Rotation horizontal_tracking;
 
 extern pros::Motor ladybrown;
 extern pros::Motor intake;

@@ -61,8 +61,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+void setLBState(int state);
 void moveLB(float velocity);
-void setLB(float targetAngle, float voltage);
 void LBControl(void);
 void colorSort(void);
 void autonomous(void);

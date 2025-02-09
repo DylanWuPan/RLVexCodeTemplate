@@ -9,13 +9,19 @@
 #include <string>
 
 bool LB_LOADING = false;
-int LB_LOADING_TARGET = 135;
+int LB_LOADING_TARGET = 120;
 
+enum LBState {
+  DOWN, 
+  LOADING,
+  SCORED
+};
+LBState LB_STATE = DOWN;
 enum Alliance {
   RED,
   BLUE
 };
-Alliance ALLIANCE = BLUE;
+Alliance ALLIANCE = RED;
 bool ROGUE_RING = false;
   
 //LEMLIB ----------------------------------------------------------------
@@ -26,17 +32,26 @@ lemlib::Drivetrain drivetrain(&left_drivetrain, // left motor group
                               450, //drivetrain rpm
                               2 // horizontal drift
 );
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_tracking, lemlib::Omniwheel::NEW_2, -2.25);
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_tracking, lemlib::Omniwheel::NEW_2, 0.25);
 
-lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to null
+// lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to null
+//                             nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
+//                             nullptr, // horizontal tracking wheel 1
+//                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
+//                             &inertial // inertial sensor
+// );
+
+lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel 1, set to null
                             nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
-                            nullptr, // horizontal tracking wheel 1
+                            &horizontal_tracking_wheel, // horizontal tracking wheel 1
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             &inertial // inertial sensor
 );
 
-lemlib::ControllerSettings lateral_controller(15, // proportional gain (kP)
+lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              100, // derivative gain (kD)
+                                              35, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
@@ -45,9 +60,9 @@ lemlib::ControllerSettings lateral_controller(15, // proportional gain (kP)
                                               20 // maximum acceleration (slew)
 );
 
-// lemlib::ControlelerSettings lateral_controller(10, // proportional gain (kP)
+// lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
 //                                               0, // integral gain (kI)
-//                                               3, // derivative gain (kD)
+//                                               35, // derivative gain (kD)
 //                                               0, // anti windup
 //                                               0, // small error range, in inches
 //                                               0, // small error range timeout, in milliseconds
@@ -56,9 +71,9 @@ lemlib::ControllerSettings lateral_controller(15, // proportional gain (kP)
 //                                               0 // maximum acceleration (slew)
 // );
 
-lemlib::ControllerSettings angular_controller(2.5, // proportional gain (kP)
+lemlib::ControllerSettings angular_controller(4, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              10, // derivative gain (kD)
+                                              25, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in degrees
                                               100, // small error range timeout, in milliseconds
@@ -87,14 +102,46 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
 //------------------------------------------------------------------------------------------------
 
 //HELPER FUNCTIONS-----------------------------------------------------------------
+void setLBState(int state){
+  switch(state){
+    case 0:
+      LB_STATE = DOWN;
+      break;
+    case 1:
+      LB_STATE = LOADING;
+      break;
+    case 2:
+      LB_STATE = SCORED;
+      break;
+  }
+  LB_LOADING = true;
+}
+
 void moveLB(float velocity){
   ladybrown.move(velocity);
 }
 
 void LBControl() {
+  double currentPos = (rotation.get_position() / -100.0);
+  if(currentPos < 0){
+      rotation.reset_position();
+    }
+
   if(LB_LOADING){
     double kp = 0.5;
-    double error = LB_LOADING_TARGET - (rotation.get_position() / -100.0);
+    double targetPos;
+    switch(LB_STATE) {
+      case DOWN:
+          targetPos = 0;
+          break;
+      case LOADING:
+          targetPos = 120;
+          break;  
+      case SCORED:
+          targetPos = 900;
+          break;
+    } 
+    double error = targetPos - currentPos;
     double velocity = kp * error;
     moveLB(velocity);
   }
@@ -103,14 +150,14 @@ void LBControl() {
 void colorSort() {
   switch(ALLIANCE){
     case RED:
-      if(optical.get_hue() > 150){
+      if(optical.get_hue() > 80){
         ROGUE_RING = true;
       } else{
         ROGUE_RING = false;
       }
       break;
     case BLUE:
-      if(optical.get_hue() < 30){
+      if(optical.get_hue() < 20){
         ROGUE_RING = true;
       } else{
         ROGUE_RING = false;
@@ -151,11 +198,14 @@ void initialize() {
         pros::lcd::print(3, "LB: %ld", rotation.get_position()/-100); // rotation
         pros::lcd::print(4, "OPTICAL SENSOR: %f", optical.get_hue()); // color sorting
         pros::lcd::print(5, "ROGUE RING: %d", ROGUE_RING); // color sorting
+        pros::lcd::print(6, "VERTICAL TRACKING: %i", vertical_tracking.get_position());
+        pros::lcd::print(7, "HORIZONTAL TRACKING: %i", horizontal_tracking.get_position());
         
         // delay to save resources
         pros::delay(20);
     }
   });
+  skillsAuto();
 }
 
 void disabled() {}
@@ -165,13 +215,13 @@ void competition_initialize() {}
 void autonomous() {
     // redLeftAuto(); //1
     // redRightAuto(); //2
-  // blueLeftAuto(); //3
-    blueRightAuto(); //4
+    // blueLeftAuto(); //3
+    // blueRightAuto(); //4
     // skillsAuto(); //5
 }
 
 void opcontrol() {
-  bool ClampValue = false;
+  bool ClampValue = true;
   bool DoinkerValue = false;
   bool HangValue = false;
 
@@ -183,16 +233,16 @@ void opcontrol() {
 		chassis.tank(LeftY, RightY);
 
     // INTAKE/HOOKS ----------------------------------------------------------------
-    if(ROGUE_RING){
+    if (controller.get_digital(E_CONTROLLER_DIGITAL_R2)){
+      intake.move_voltage(-12000);
+      hooks.move_voltage(-12000);
+    } else if(ROGUE_RING){
       pros::delay(120);
       hooks.move_voltage(0);
       ROGUE_RING = false;
     } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R1)) {
       intake.move_voltage(12000);
       hooks.move_voltage(12000);
-    } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R2)){
-      intake.move_voltage(-20000);
-      hooks.move_voltage(-12000);
     } else {
       intake.move_voltage(0);
       hooks.move_voltage(0);

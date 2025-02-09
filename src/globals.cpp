@@ -20,8 +20,10 @@
 // #define LB_PORT 19
 
 //, LEFT_DRIVETRAIN_MIDDLE_PORT, LEFT_DRIVETRAIN_BACK_PORT
-pros::MotorGroup left_drivetrain({-8,-9,10}, pros::v5::MotorGears::blue, pros::v5::MotorUnits::degrees);
-pros::MotorGroup right_drivetrain({ 2, 3, -7}, pros::v5::MotorGears::blue, pros::v5::MotorUnits::degrees);
+pros::MotorGroup left_drivetrain({-8, -9, 10}, pros::v5::MotorGears::blue, pros::v5::MotorUnits::degrees);
+pros::MotorGroup right_drivetrain({ 2, 3, -19}, pros::v5::MotorGears::blue, pros::v5::MotorUnits::degrees);
+pros::Rotation vertical_tracking(16);
+pros::Rotation horizontal_tracking(-17);
 
 pros::Motor intake(-12, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 pros::Motor hooks(-20, pros::v5::MotorGears::blue, pros::v5::MotorUnits::degrees);
