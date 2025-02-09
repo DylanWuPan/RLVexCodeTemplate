@@ -33,8 +33,7 @@ pros::Rotation rotation(18);
 pros::Imu inertial(21);
 pros::Optical optical(13);
 
-pros::adi::DigitalOut hang ('B', false);
 pros::adi::DigitalOut clamp ('A', false);
-pros::adi::DigitalOut doinker ('C', false);
+pros::adi::DigitalOut doinker ('B', false);
 
 pros::Controller controller(CONTROLLER_MASTER);

@@ -138,7 +138,7 @@ void LBControl() {
           targetPos = 120;
           break;  
       case SCORED:
-          targetPos = 900;
+          targetPos = 700;
           break;
     } 
     double error = targetPos - currentPos;
@@ -221,7 +221,7 @@ void autonomous() {
 }
 
 void opcontrol() {
-  bool ClampValue = true;
+  bool ClampValue = false;
   bool DoinkerValue = false;
   bool HangValue = false;
 
@@ -255,7 +255,7 @@ void opcontrol() {
     }
 
     // DOINKER ----------------------------------------------------------------
-    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_RIGHT)) {
+    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_LEFT)) {
       doinker.set_value(!DoinkerValue);
       DoinkerValue = !DoinkerValue;
     }
