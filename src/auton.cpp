@@ -11,13 +11,12 @@ void clampGoal(){
 
 void unclampGoal(){
   clamp.set_value(false);
-  pros::delay(250);
+  pros::delay(300);
 }
 
 void allianceStake(){
   hooks.move_voltage(12000);
-  pros::delay(300);
-  // hooks.move_voltage(0);
+  pros::delay(500);
 }
 
 void lockLB(){
@@ -122,7 +121,7 @@ void redRightAuto(){
 
 void blueLeftAuto(){
   chassis.setPose(60, 13.5, -90);
-  pros::delay(300);
+  pros::delay(250);
 
   chassis.moveToPoint(72, 13.5, 4000, {.forwards = false, .maxSpeed = 60});
   chassis.turnToHeading(0, 500, {.maxSpeed = 60});
@@ -193,79 +192,98 @@ void blueRightAuto(){
 
 void skillsAuto(){
   chassis.setPose(72, 12, 0);
+  pros::delay(300);
 
   allianceStake();
 
-  chassis.moveToPoint(72, 24, 4000, {.maxSpeed = 80});
+  chassis.moveToPoint(72, 24, 4000, {.maxSpeed = 100});
   hooks.move_voltage(0);
-  chassis.turnToHeading(90, 4000, {.maxSpeed = 80});
-  chassis.moveToPoint(48, 24, 4000, {.forwards = false, .maxSpeed = 60});
-  pros::delay(1000);
+  chassis.turnToHeading(90, 1000, {.maxSpeed = TURN_SPEED});
+  chassis.moveToPoint(52, 24, 4000, {.forwards = false, .maxSpeed = 100});
+  pros::delay(750);
   clampGoal();
 
+  chassis.moveToPoint(47, 48, 4000, {.maxSpeed = 100});
   hooks.move_voltage(12000);
   intake.move_voltage(12000);
-  chassis.moveToPoint(46, 48, 4000, {.maxSpeed = 80});
-  chassis.moveToPoint(22, 105, 4000, {.maxSpeed = 80});
-  pros::delay(1000);
+  chassis.moveToPoint(22, 105, 4000, {.maxSpeed = 100});
+  pros::delay(1500);
   setLBState(1);
-  chassis.moveToPoint(28, 76, 4000, {.forwards = false, .maxSpeed = 80});
-  chassis.turnToHeading(-90, 1000, {.maxSpeed = 80});
+  chassis.moveToPoint(29, 76, 4000, {.forwards = false, .maxSpeed = 100});
+  chassis.turnToHeading(-90, 1000, {.maxSpeed = TURN_SPEED});
   chassis.moveToPoint(0, 74, 2000, {.maxSpeed = 60});
   lockLB();
   setLBState(2);
-  pros::delay(250);
+  pros::delay(200);
   hooks.move_voltage(12000);
+  pros::delay(300);
   
-  chassis.moveToPoint(21, 72, 4000, {.forwards = false, .maxSpeed = 80});
-  chassis.turnToHeading(180, 1000);
+  chassis.moveToPoint(21, 72, 4000, {.forwards = false, .maxSpeed = 100});
+  chassis.turnToHeading(180, 1000, {.maxSpeed = TURN_SPEED});
   setLBState(0);
-  chassis.moveToPoint(24, 8, 4000, {.maxSpeed = 60});
-  chassis.moveToPoint(12, 30, 2000, {.maxSpeed = 80});
-  pros::delay(500);
-  chassis.moveToPoint(8, 15, 4000, {.forwards = false, .maxSpeed = 80});
+  chassis.moveToPoint(24, 10, 4000, {.maxSpeed = 100});
+  pros::delay(1000);
+  chassis.moveToPoint(10, 40, 2000, {.maxSpeed = 100});
+  chassis.moveToPoint(8, 18, 2000, {.forwards = false, .maxSpeed = 100});
+  pros::delay(1000);
   unclampGoal();
 
-  chassis.moveToPoint(36, 120, 4000, {.maxSpeed = 80});
-  chassis.moveToPoint(42, 132, 4000, {.forwards = false, .maxSpeed = 80});
+  chassis.moveToPoint(36, 120, 4000, {.maxSpeed = 100});
+  chassis.moveToPoint(42, 130, 4000, {.forwards = false, .maxSpeed = 100});
   pros::delay(1500);
   clampGoal();
   setLBState(1);
-  chassis.moveToPoint(5, 140, 4000, {.maxSpeed = 80});
+  chassis.moveToPoint(10, 140, 2000, {.maxSpeed = 100});
+  pros::delay(500);
   doinker.set_value(true);
-  chassis.moveToPoint(15, 120, 4000, {.maxSpeed = 80});
+  chassis.moveToPoint(15, 120, 2000, {.maxSpeed = 100});
   intake.move_voltage(-12000);
-  chassis.moveToPoint(8, 133, 2000, {.forwards = false, .maxSpeed = 80});
+  chassis.moveToPoint(8, 133, 2000, {.forwards = false, .maxSpeed = 100});
   unclampGoal();
-
-  chassis.moveToPoint(24, 120, 4000, {.maxSpeed = 80});
-  chassis.moveToPoint(74, 120, 4000, {.forwards = false, .maxSpeed = 80});
-  pros::delay(2000);
-  intake.move_voltage(-12000);
   doinker.set_value(false);
+
+  chassis.moveToPoint(24, 120, 4000, {.maxSpeed = 100});
+  chassis.moveToPoint(66, 120, 4000, {.forwards = false, .maxSpeed = 100});
+  intake.move_voltage(-12000);
+  pros::delay(2000);
   clampGoal();
+  chassis.moveToPoint(60, 120, 2000, {.maxSpeed = 100});
+  chassis.turnToHeading(0, 1000, {.maxSpeed = TURN_SPEED});
+  chassis.moveToPoint(60, 144, 2000, {.maxSpeed = 100});
+  chassis.moveToPoint(60, 132, 4000, {.forwards = false, .maxSpeed = 100});
+  lockLB();
+  setLBState(4);
+  pros::delay(500);
+  chassis.moveToPoint(66, 125, 4000, {.forwards = false, .maxSpeed = 100});
   pros::delay(250);
-  chassis.moveToPoint(65, 120, 4000, {.maxSpeed = 80});
-  chassis.turnToHeading(0, 1000, {.maxSpeed = 80});
-  chassis.moveToPoint(65, 144, 2000, {.maxSpeed = 80});
-  chassis.moveToPoint(65, 130, 4000, {.forwards = false, .maxSpeed = 80});
-  hooks.move_voltage(0);
-  setLBState(2);
-  pros::delay(1000);
+  setLBState(0);
 
   intake.move_voltage(12000);
   hooks.move_voltage(12000);
-  chassis.moveToPoint(42, 90, 4000, {.maxSpeed = 80});
-  setLBState(0);
-  chassis.turnToHeading(135, 1000, {.maxSpeed = 80});
-  chassis.moveToPoint(96, 48, 4000, {.maxSpeed = 4000});
+  chassis.moveToPoint(40, 95, 4000, {.maxSpeed = 100});
+  chassis.turnToHeading(135, 1000, {.maxSpeed = TURN_SPEED});
+  chassis.moveToPoint(90, 54, 4000, {.maxSpeed = 100});
   hooks.move_voltage(0);
-  chassis.moveToPoint(120, 24, 4000, {.maxSpeed = 60});
+  chassis.moveToPoint(114, 30, 4000, {.maxSpeed = 100});
   hooks.move_voltage(12000);
-  chassis.moveToPoint(120, 12, 4000, {.maxSpeed = 80});
-  chassis.moveToPoint(132, 24, 4000, {.maxSpeed = 80});
-  chassis.moveToPoint(136, 7, 2000, {.forwards = false, .maxSpeed = 80});
+  chassis.moveToPoint(115, 8, 2000, {.maxSpeed = 100});
+  chassis.moveToPoint(125, 30, 4000, {.maxSpeed = 100});
+  chassis.moveToPoint(128, 10, 2000, {.forwards = false, .maxSpeed = 100});
+  pros::delay(250);
   unclampGoal();
+
+  chassis.moveToPoint(120, 54, 4000, {.maxSpeed = 100});
+  setLBState(1);
+  chassis.moveToPoint(90, 24, 4000, {.forwards = false, .maxSpeed = 100});
+  pros::delay(2000);
+  clampGoal();
+  chassis.moveToPoint(115, 76, 4000, {.maxSpeed = 100});
+  chassis.turnToHeading(90, 1000, {.maxSpeed = TURN_SPEED});
+  chassis.moveToPoint(144, 76, 1000, {.maxSpeed = 100});
+  lockLB();
+  setLBState(2);
+  pros::delay(100);
+  hooks.move_voltage(12000);
 
   pros::delay(10000);
 }

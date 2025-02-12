@@ -9,12 +9,13 @@
 #include <string>
 
 bool LB_LOADING = false;
-int LB_LOADING_TARGET = 120;
 
 enum LBState {
   DOWN, 
   LOADING,
-  SCORED
+  HIGHSTAKE,
+  DESCORE,
+  ALLIANCESTAKE
 };
 LBState LB_STATE = DOWN;
 enum Alliance {
@@ -111,8 +112,13 @@ void setLBState(int state){
       LB_STATE = LOADING;
       break;
     case 2:
-      LB_STATE = SCORED;
+      LB_STATE = HIGHSTAKE;
       break;
+    case 3:
+      LB_STATE = DESCORE;
+      break;
+    case 4:
+      LB_STATE = ALLIANCESTAKE;
   }
   LB_LOADING = true;
 }
@@ -128,18 +134,23 @@ void LBControl() {
     }
 
   if(LB_LOADING){
-    double kp = 0.5;
+    double kp = 0.7;
     double targetPos;
     switch(LB_STATE) {
       case DOWN:
           targetPos = 0;
           break;
       case LOADING:
-          targetPos = 120;
+          targetPos = 110;
           break;  
-      case SCORED:
+      case HIGHSTAKE:
           targetPos = 700;
           break;
+      case DESCORE:
+          targetPos = 600;
+          break;
+      case ALLIANCESTAKE:
+        targetPos = 850;
     } 
     double error = targetPos - currentPos;
     double velocity = kp * error;
@@ -164,6 +175,12 @@ void colorSort() {
       }
       break;
   }
+}
+
+void scoreAllianceStake(){
+  chassis.setPose(0, 0, 0);
+  chassis.moveToPoint(0, -10, 0);
+  setLBState(5);
 }
 
 void initialize() {
@@ -205,7 +222,7 @@ void initialize() {
         pros::delay(20);
     }
   });
-  skillsAuto();
+  // skillsAuto ();
 }
 
 void disabled() {}
@@ -217,7 +234,7 @@ void autonomous() {
     // redRightAuto(); //2
     // blueLeftAuto(); //3
     // blueRightAuto(); //4
-    // skillsAuto(); //5
+    skillsAuto(); //5
 }
 
 void opcontrol() {
@@ -260,15 +277,22 @@ void opcontrol() {
       DoinkerValue = !DoinkerValue;
     }
 
-    // HANG ----------------------------------------------------------------
-    // if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN)) {
-    //   hang.set_value(!HangValue);
-    //   HangValue = !HangValue;
-    // }
+
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
+      rotation.reset_position();
+    } 
+    
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
+      setLBState(3);
+    }
+
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+        scoreAllianceStake();
+      }    
 
     // LADY BROWN ----------------------------------------------------------------
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
-      // setLB(20, 2500);
+      setLBState(1);
       LB_LOADING = true;
     } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
         LB_LOADING = false;
@@ -279,6 +303,7 @@ void opcontrol() {
     } else {
       ladybrown.move_voltage(0);
     }
+
     pros::delay(20);
   }
 }
