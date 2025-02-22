@@ -22,6 +22,7 @@ extern pros::Optical optical;
 
 extern pros::adi::DigitalOut clamp;
 extern pros::adi::DigitalOut doinker;
+extern pros::adi::DigitalOut intakeLifter;
 
 extern lemlib::Chassis chassis;
 

@@ -8,7 +8,7 @@
 #include <cmath>
 #include <string>
 
-bool LB_LOADING = false;
+float DRIVERS_SPEED = 0.75;
 
 enum LBState {
   DOWN, 
@@ -18,11 +18,15 @@ enum LBState {
   ALLIANCESTAKE
 };
 LBState LB_STATE = DOWN;
+bool LB_LOADING = true;
+
 enum Alliance {
   RED,
   BLUE
 };
 Alliance ALLIANCE = RED;
+int BLUE_HUE = 60;
+int RED_HUE = 50;
 bool ROGUE_RING = false;
   
 //LEMLIB ----------------------------------------------------------------
@@ -123,6 +127,37 @@ void setLBState(int state){
   LB_LOADING = true;
 }
 
+void nextLBState(){
+  switch(LB_STATE){
+    case DOWN:
+      LB_STATE = LOADING;
+      break;
+    case LOADING:
+      LB_STATE = HIGHSTAKE;
+      break;
+    case HIGHSTAKE:
+      LB_STATE = DOWN;
+      break;
+    case ALLIANCESTAKE:
+      LB_STATE = DOWN;
+      break;
+  }
+}
+
+void prevLBState(){
+  switch(LB_STATE){
+    case DOWN:
+      LB_STATE = HIGHSTAKE;
+      break;
+    case LOADING:
+      LB_STATE = DOWN;
+      break;
+    case HIGHSTAKE:
+      LB_STATE = LOADING;
+      break;
+  }
+}
+
 void moveLB(float velocity){
   ladybrown.move(velocity);
 }
@@ -134,7 +169,7 @@ void LBControl() {
     }
 
   if(LB_LOADING){
-    double kp = 0.7;
+    double kp = 0.4;
     double targetPos;
     switch(LB_STATE) {
       case DOWN:
@@ -144,7 +179,7 @@ void LBControl() {
           targetPos = 110;
           break;  
       case HIGHSTAKE:
-          targetPos = 700;
+          targetPos = 600;
           break;
       case DESCORE:
           targetPos = 600;
@@ -161,20 +196,26 @@ void LBControl() {
 void colorSort() {
   switch(ALLIANCE){
     case RED:
-      if(optical.get_hue() > 80){
+      if(optical.get_hue() > BLUE_HUE){
         ROGUE_RING = true;
       } else{
         ROGUE_RING = false;
       }
       break;
     case BLUE:
-      if(optical.get_hue() < 20){
+      if(optical.get_hue() < RED_HUE){
         ROGUE_RING = true;
       } else{
         ROGUE_RING = false;
       }
       break;
   }
+}
+
+void skipRing(){
+  hooks.move_voltage(0);
+  pros::delay(150);
+  ROGUE_RING = false;
 }
 
 void scoreAllianceStake(){
@@ -188,8 +229,8 @@ void initialize() {
 	chassis.calibrate(); // calibrate sensors
   chassis.setPose(0, 0, 0);
   rotation.reset_position();
+  optical.set_led_pwm(100);
 
-  // chassis.turnToHeading(90, 10000);
 
   pros::Task LBControlTask([]{
         while (true) {
@@ -201,7 +242,7 @@ void initialize() {
   pros::Task ColorSortTask([]{
         while (true) {
             colorSort();
-            pros::delay(10);
+            pros::delay(5);
         }
     });
 
@@ -213,16 +254,16 @@ void initialize() {
         pros::lcd::print(1, "Y: %f", robotPos.y); // y
         pros::lcd::print(2, "Theta: %f", robotPos.theta); // heading
         pros::lcd::print(3, "LB: %ld", rotation.get_position()/-100); // rotation
-        pros::lcd::print(4, "OPTICAL SENSOR: %f", optical.get_hue()); // color sorting
-        pros::lcd::print(5, "ROGUE RING: %d", ROGUE_RING); // color sorting
-        pros::lcd::print(6, "VERTICAL TRACKING: %i", vertical_tracking.get_position());
-        pros::lcd::print(7, "HORIZONTAL TRACKING: %i", horizontal_tracking.get_position());
+        pros::lcd::print(4, "LB_STATE: %d", LB_STATE); // rotation
+        pros::lcd::print(5, "OPTICAL SENSOR: %f", optical.get_hue()); // color sorting
+        pros::lcd::print(6, "ROGUE RING: %d", ROGUE_RING); // color sorting
+        pros::lcd::print(7, "VERTICAL TRACKING: %i", vertical_tracking.get_position());
+        pros::lcd::print(8, "HORIZONTAL TRACKING: %i", horizontal_tracking.get_position());
         
         // delay to save resources
         pros::delay(20);
     }
   });
-  // skillsAuto ();
 }
 
 void disabled() {}
@@ -230,22 +271,24 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-    // redLeftAuto(); //1
-    // redRightAuto(); //2
-    // blueLeftAuto(); //3
-    // blueRightAuto(); //4
+    // redRing(); //1
+    // redGoal(); //2
+    // blueGoal(); //3
+    // blueRing(); //4
     skillsAuto(); //5
+    // soloWPRed();
 }
 
 void opcontrol() {
   bool ClampValue = false;
   bool DoinkerValue = false;
   bool HangValue = false;
+  bool IntakeValue = false;
 
   while (true) {
     // DRIVE ----------------------------------------------------------------
-    float LeftY = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y);
-    float RightY = controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y);
+    float LeftY = DRIVERS_SPEED * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y);
+    float RightY = DRIVERS_SPEED * controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y);
 
 		chassis.tank(LeftY, RightY);
 
@@ -253,11 +296,9 @@ void opcontrol() {
     if (controller.get_digital(E_CONTROLLER_DIGITAL_R2)){
       intake.move_voltage(-12000);
       hooks.move_voltage(-12000);
-    } else if(ROGUE_RING){
-      pros::delay(120);
-      hooks.move_voltage(0);
-      ROGUE_RING = false;
-    } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R1)) {
+    } else if(controller.get_digital(E_CONTROLLER_DIGITAL_R1) && ROGUE_RING){
+      skipRing();
+    } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R1) && !ROGUE_RING) {
       intake.move_voltage(12000);
       hooks.move_voltage(12000);
     } else {
@@ -277,6 +318,11 @@ void opcontrol() {
       DoinkerValue = !DoinkerValue;
     }
 
+    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_RIGHT)) {
+      intakeLifter.set_value(!IntakeValue);
+      IntakeValue = !IntakeValue;
+    }
+
 
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
       rotation.reset_position();
@@ -287,19 +333,16 @@ void opcontrol() {
     }
 
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-        scoreAllianceStake();
-      }    
+        setLBState(4);
+    }    
 
     // LADY BROWN ----------------------------------------------------------------
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
       setLBState(1);
-      LB_LOADING = true;
-    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-        LB_LOADING = false;
-        ladybrown.move_voltage(12000);
-    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
-        LB_LOADING = false;
-        ladybrown.move_voltage(-12000);
+    } else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+        nextLBState();
+    } else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+        prevLBState();
     } else {
       ladybrown.move_voltage(0);
     }

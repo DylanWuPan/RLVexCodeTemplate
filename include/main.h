@@ -62,9 +62,12 @@
 extern "C" {
 #endif
 void setLBState(int state);
+void nextLBState(void);
+void prevLBState(void);
 void moveLB(float velocity);
 void LBControl(void);
 void colorSort(void);
+void skipRing(void);
 void autonomous(void);
 void initialize(void);
 void disabled(void);

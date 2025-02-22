@@ -2,10 +2,11 @@
 #define AUTON_HPP
 
 // Function declarations
-void redLeftAuto();
-void redRightAuto();
-void blueLeftAuto();
-void blueRightAuto();
+void redRing();
+void redGoal();
+void blueGoal();
+void blueRing();
 void skillsAuto();
-
+void soloWPRed();
+void soloWPBlue();
 #endif
