@@ -4,9 +4,11 @@
 // Function declarations
 void redRing();
 void redGoal();
-void blueGoal();
+void redSAWP();
+
 void blueRing();
+void blueGoal();
+void blueSAWP();
+
 void skillsAuto();
-void soloWPRed();
-void soloWPBlue();
 #endif

@@ -195,7 +195,7 @@ void blueRing(){
   // pros::delay(10000);
 }
 
-void soloWPRed(){
+void redSAWP(){
   chassis.setPose(64, 10, 125); 
   rotation.set_position(96);
   unclampGoal();

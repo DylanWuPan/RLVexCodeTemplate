@@ -37,4 +37,6 @@ pros::adi::DigitalOut clamp ('A', false);
 pros::adi::DigitalOut doinker ('B', false);
 pros::adi::DigitalOut intakeLifter ('C', false);
 
+pros::adi::DigitalIn limitSwitch ('D');
+
 pros::Controller controller(CONTROLLER_MASTER);
