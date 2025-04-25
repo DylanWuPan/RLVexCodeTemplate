@@ -21,9 +21,11 @@ bool LB_LOADING = true;
 
 enum Alliance { RED, BLUE };
 Alliance ALLIANCE = RED;
-int BLUE_HUE = 70;
-int RED_HUE = 50;
+int DEFAULT_HUE = 70;
+int BLUE_HUE = DEFAULT_HUE + 10;
+int RED_HUE = DEFAULT_HUE - 10;
 bool ROGUE_RING = false;
+bool isSkipping = false;
   
 //LEMLIB ----------------------------------------------------------------
 lemlib::Drivetrain drivetrain(&left_drivetrain, // left motor group
@@ -159,14 +161,17 @@ void colorSort() {
     case RED: ROGUE_RING = optical.get_hue() > BLUE_HUE; break;
     case BLUE: ROGUE_RING = optical.get_hue() < RED_HUE; break;
   }
-  ROGUE_RING = true;
+  // ROGUE_RING = true; // For testing purposes
 }
 
 void skipRing() {
-  if(limitSwitch.get_new_press()) {
+  if(limitSwitch.get_new_press() & !isSkipping) {
+    isSkipping = true;
+    pros::delay(75);
     hooks.move_voltage(0);
     pros::delay(200);
-    // ROGUE_RING = false;
+    ROGUE_RING = false;
+    isSkipping = false;
   }
 }
 
@@ -195,7 +200,7 @@ void initialize() {
   pros::Task ColorSortTask([] {
     while (true) {
       colorSort();
-      pros::delay(15);
+      pros::delay(5);
     }
   });
 
@@ -270,11 +275,10 @@ void opcontrol() {
     if (controller.get_digital(E_CONTROLLER_DIGITAL_R2)) {
       intake.move_voltage(-INTAKE_SPEED);
       hooks.move_voltage(-HOOK_SPEED);
-    } else if(controller.get_digital(E_CONTROLLER_DIGITAL_R1) && ROGUE_RING) {
-      intake.move_voltage(INTAKE_SPEED);
-      hooks.move_voltage(HOOK_SPEED);
-      skipRing();
     } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R1)) {
+      if(ROGUE_RING){
+        skipRing();
+      }
       intake.move_voltage(INTAKE_SPEED);
       hooks.move_voltage(HOOK_SPEED);
     } else {
