@@ -10,20 +10,20 @@
 #include <string>
 
 // Constants -------------------------------------------------------------------
-float DRIVERS_SPEED = 0.75;
+float DRIVERS_SPEED = 1;
 int HOOK_SPEED = 10000;
 int INTAKE_SPEED = 12000;
 
 // Enums -----------------------------------------------------------------------
-enum LBState { DOWN, LOADING, HIGHSTAKE, DESCORE, ALLIANCESTAKE };
+enum LBState { DOWN, LOADING, HIGHSTAKE, DESCORE, ALLIANCESTAKE, TIPPING };
 LBState LB_STATE = DOWN;
 bool LB_LOADING = true;
 
 enum Alliance { RED, BLUE };
 Alliance ALLIANCE = RED;
-int DEFAULT_HUE = 70;
-int BLUE_HUE = DEFAULT_HUE + 10;
-int RED_HUE = DEFAULT_HUE - 10;
+int DEFAULT_HUE = 45;
+int BLUE_HUE = DEFAULT_HUE + 20;
+int RED_HUE = DEFAULT_HUE - 20;
 bool ROGUE_RING = false;
 bool isSkipping = false;
   
@@ -111,6 +111,7 @@ void setLBState(int state) {
     case 2: LB_STATE = HIGHSTAKE; break;
     case 3: LB_STATE = DESCORE; break;
     case 4: LB_STATE = ALLIANCESTAKE; break;
+    case 5: LB_STATE = TIPPING; break;
   }
   LB_LOADING = true;
 }
@@ -119,9 +120,9 @@ void nextLBState() {
   switch(LB_STATE) {
     case DOWN: LB_STATE = LOADING; break;
     case LOADING: LB_STATE = HIGHSTAKE; break;
-    case HIGHSTAKE:
-    case ALLIANCESTAKE: LB_STATE = DOWN; break;
+    default: LB_STATE = DOWN; break;
   }
+    LB_LOADING = true;
 }
 
 void prevLBState() {
@@ -129,7 +130,9 @@ void prevLBState() {
     case DOWN: LB_STATE = HIGHSTAKE; break;
     case LOADING: LB_STATE = DOWN; break;
     case HIGHSTAKE: LB_STATE = LOADING; break;
+    default: LB_STATE = DOWN; break;
   }
+    LB_LOADING = true;
 }
 
 void moveLB(float velocity) {
@@ -146,9 +149,10 @@ void LBControl() {
     switch(LB_STATE) {
       case DOWN: targetPos = 0; break;
       case LOADING: targetPos = 110; break;
-      case HIGHSTAKE:
+      case HIGHSTAKE: targetPos = 700; break;
       case DESCORE: targetPos = 600; break;
       case ALLIANCESTAKE: targetPos = 850; break;
+      case TIPPING: targetPos = 1000; break;
     }
     double error = targetPos - currentPos;
     double velocity = kp * error;
@@ -167,9 +171,9 @@ void colorSort() {
 void skipRing() {
   if(limitSwitch.get_new_press() & !isSkipping) {
     isSkipping = true;
-    pros::delay(75);
+    pros::delay(30);
     hooks.move_voltage(0);
-    pros::delay(200);
+    pros::delay(150);
     ROGUE_RING = false;
     isSkipping = false;
   }
@@ -178,7 +182,7 @@ void skipRing() {
 void scoreAllianceStake() {
   chassis.setPose(0, 0, 0);
   chassis.moveToPoint(0, -10, 0);
-  setLBState(5);
+  setLBState(4);
 }
 
 // Main Lifecycle --------------------------------------------------------------
@@ -219,6 +223,7 @@ void initialize() {
       pros::lcd::print(9, "HORIZONTAL TRACKING: %i", horizontal_tracking.get_position());
       pros::delay(20);
     }
+    
   });
 
 //   pros::Task lvgl_debug_update_task([] {
@@ -239,6 +244,9 @@ void initialize() {
 //         pros::delay(100); // Update every 100ms
 //     }
 // });
+
+    redGoal();
+
 }
 
 void disabled() {}
@@ -306,7 +314,8 @@ void opcontrol() {
 
     // RESET LB ROTATION ---------------------------------------------------
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
-      rotation.reset_position();
+      // rotation.reset_position();
+      setLBState(5);
     }
 
     // DESCORE --------------------------------------------------------------
