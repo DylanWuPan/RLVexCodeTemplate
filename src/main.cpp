@@ -19,8 +19,6 @@ enum LBState { DOWN, LOADING, HIGHSTAKE, DESCORE, ALLIANCESTAKE, TIPPING, BARTOU
 LBState LB_STATE = DOWN;
 bool LB_LOADING = true;
 
-// enum Alliance { RED, BLUE };
-// Alliance ALLIANCE = RED;
 Alliance ALLIANCE = RED;
 int DEFAULT_HUE = 45;
 int BLUE_HUE = DEFAULT_HUE + 20;
@@ -290,7 +288,7 @@ void autonomous() {
   //   default: break;
   // }
 
-  redRing();
+  blueRingRush();
 }
 
 void opcontrol() {

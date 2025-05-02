@@ -208,6 +208,38 @@ void blueRing(){
   // pros::delay(10000);
 }
 
+void blueRingRush(){
+  ALLIANCE = BLUE;
+  chassis.setPose(100, 21, 15);
+  // pros::delay(250);
+  
+  chassis.moveToPoint(112, 62, 4000, {.maxSpeed = 120});
+  doinker.set_value(true);
+  intake.move_voltage(INTAKE_SPEED);
+
+  chassis.moveToPoint(92, 44, 4000, {.forwards = false, .maxSpeed = 70});
+  pros::delay(1200);
+  clampGoal();
+  hooks.move_voltage(HOOK_SPEED);
+  doinker.set_value(false);
+
+  chassis.moveToPoint(124, 48, 4000, {.maxSpeed = 60});
+
+  chassis.moveToPoint(144, 0, 3000, {.maxSpeed = 100});
+  // chassis.moveToPoint(130, 14, 2000, {.forwards = false, .maxSpeed = 100});
+  // chassis.moveToPoint(138, 6, 2000, {.maxSpeed = 100});
+
+  chassis.moveToPoint(85, 18, 4000, {.maxSpeed = 80});
+  pros::delay(2000);
+  intakeLifter.set_value(true);
+  chassis.moveToPoint(72, 18, 4000, {.maxSpeed = 60});
+  pros::delay(1000);
+  intakeLifter.set_value(false);
+
+
+  pros::delay(10000);
+}
+
 void redSAWP(){
   chassis.setPose(64, 10, 125); 
   rotation.set_position(96);

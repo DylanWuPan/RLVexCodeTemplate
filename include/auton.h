@@ -7,6 +7,7 @@ void redGoal();
 void redSAWP();
 
 void blueRing();
+void blueRingRush();
 void blueGoal();
 void blueSAWP();
 
