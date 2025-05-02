@@ -15,17 +15,19 @@ int HOOK_SPEED = 10000;
 int INTAKE_SPEED = 12000;
 
 // Enums -----------------------------------------------------------------------
-enum LBState { DOWN, LOADING, HIGHSTAKE, DESCORE, ALLIANCESTAKE, TIPPING };
+enum LBState { DOWN, LOADING, HIGHSTAKE, DESCORE, ALLIANCESTAKE, TIPPING, BARTOUCH };
 LBState LB_STATE = DOWN;
 bool LB_LOADING = true;
 
-enum Alliance { RED, BLUE };
+// enum Alliance { RED, BLUE };
+// Alliance ALLIANCE = RED;
 Alliance ALLIANCE = RED;
 int DEFAULT_HUE = 45;
 int BLUE_HUE = DEFAULT_HUE + 20;
 int RED_HUE = DEFAULT_HUE - 20;
 bool ROGUE_RING = false;
 bool isSkipping = false;
+bool isJammed = false;
   
 //LEMLIB ----------------------------------------------------------------
 lemlib::Drivetrain drivetrain(&left_drivetrain, // left motor group
@@ -112,6 +114,7 @@ void setLBState(int state) {
     case 3: LB_STATE = DESCORE; break;
     case 4: LB_STATE = ALLIANCESTAKE; break;
     case 5: LB_STATE = TIPPING; break;
+    case 6: LB_STATE = BARTOUCH; break;
   }
   LB_LOADING = true;
 }
@@ -153,10 +156,22 @@ void LBControl() {
       case DESCORE: targetPos = 600; break;
       case ALLIANCESTAKE: targetPos = 850; break;
       case TIPPING: targetPos = 1000; break;
+      case BARTOUCH: targetPos = 1200; break;
     }
     double error = targetPos - currentPos;
     double velocity = kp * error;
     moveLB(velocity);
+  }
+}
+
+void hooksControl(){
+  if(hooks.get_actual_velocity() < 10 && hooks.get_voltage() > 1000 && !(LB_STATE == LOADING) && !isJammed){
+    isJammed = true;
+    hooks.move_voltage(-HOOK_SPEED);
+    pros::delay(100);
+    hooks.move_voltage(HOOK_SPEED);
+    pros::delay(200);
+    isJammed = false;
   }
 }
 
@@ -165,7 +180,9 @@ void colorSort() {
     case RED: ROGUE_RING = optical.get_hue() > BLUE_HUE; break;
     case BLUE: ROGUE_RING = optical.get_hue() < RED_HUE; break;
   }
-  // ROGUE_RING = true; // For testing purposes
+  if(ROGUE_RING && hooks.get_voltage() > 0){
+    skipRing();
+  }
 }
 
 void skipRing() {
@@ -174,6 +191,7 @@ void skipRing() {
     pros::delay(30);
     hooks.move_voltage(0);
     pros::delay(150);
+    hooks.move_voltage(HOOK_SPEED);
     ROGUE_RING = false;
     isSkipping = false;
   }
@@ -208,11 +226,20 @@ void initialize() {
     }
   });
 
+  pros::Task HooksTask([] {
+    while (true) {
+      hooksControl();
+      pros::delay(15);
+    }
+  });
+
   pros::Task screen_task([] {
     while (true) {
       lemlib::Pose robotPos = chassis.getPose();
       pros::lcd::print(0, "X: %f", robotPos.x);
+      pros::lcd::print(0, "X: %f", hooks.get_actual_velocity());
       pros::lcd::print(1, "Y: %f", robotPos.y);
+      pros::lcd::print(1, "Y: %ld", hooks.get_voltage());
       pros::lcd::print(2, "Theta: %f", robotPos.theta);
       pros::lcd::print(3, "LB: %ld", rotation.get_position() / -100);
       pros::lcd::print(4, "LB_STATE: %d", LB_STATE);
@@ -244,9 +271,6 @@ void initialize() {
 //         pros::delay(100); // Update every 100ms
 //     }
 // });
-
-    redGoal();
-
 }
 
 void disabled() {}
@@ -254,17 +278,19 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-  int selected = autonSelector::auton;
-  switch (selected) {
-    case 0: skillsAuto(); break;
-    case 1: redRing(); break;
-    case 2: redGoal(); break;
-    case 3: redSAWP(); break;
-    case -1: blueRing(); break;
-    case -2: blueGoal(); break;
-    case -3: /* blueSAWP(); */ break;
-    default: break;
-  }
+  // int selected = autonSelector::auton;
+  // switch (selected) {
+  //   case 0: skillsAuto(); break;
+  //   case 1: redRing(); break;
+  //   case 2: redGoal(); break;
+  //   case 3: redSAWP(); break;
+  //   case -1: blueRing(); break;
+  //   case -2: blueGoal(); break;
+  //   case -3: /* blueSAWP(); */ break;
+  //   default: break;
+  // }
+
+  redRing();
 }
 
 void opcontrol() {
@@ -280,18 +306,17 @@ void opcontrol() {
     chassis.tank(LeftY, RightY);
 
     // INTAKE/HOOKS ---------------------------------------------------------
-    if (controller.get_digital(E_CONTROLLER_DIGITAL_R2)) {
-      intake.move_voltage(-INTAKE_SPEED);
-      hooks.move_voltage(-HOOK_SPEED);
-    } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R1)) {
-      if(ROGUE_RING){
-        skipRing();
+    if(!isJammed){
+      if (controller.get_digital(E_CONTROLLER_DIGITAL_R2)) {
+        intake.move_voltage(-INTAKE_SPEED);
+        hooks.move_voltage(-HOOK_SPEED);
+      } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R1)) {
+        intake.move_voltage(INTAKE_SPEED);
+        hooks.move_voltage(HOOK_SPEED);
+      } else {
+        intake.move_voltage(0);
+        hooks.move_voltage(0);
       }
-      intake.move_voltage(INTAKE_SPEED);
-      hooks.move_voltage(HOOK_SPEED);
-    } else {
-      intake.move_voltage(0);
-      hooks.move_voltage(0);
     }
 
     // CLAMP ----------------------------------------------------------------

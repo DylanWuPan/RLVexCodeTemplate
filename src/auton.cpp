@@ -3,6 +3,8 @@
 #include "auton.h"
 
 const int TURN_SPEED = 80;
+const int HOOK_SPEED = 10000;
+const int INTAKE_SPEED = 12000;
 
 void clampGoal(){
   clamp.set_value(true);
@@ -18,6 +20,13 @@ void allianceStake(){
   pros::delay(300);
 }
 
+void lbAllianceStake(){
+  rotation.set_position(96);
+  setLBState(4);
+  pros::delay(700);
+  setLBState(0);
+}
+
 void lockLB(int count){
   for(int i = 0; i < count; i++){
     hooks.move_voltage(0);
@@ -29,84 +38,88 @@ void lockLB(int count){
 }
 
 void redRing(){
+  ALLIANCE = RED;
   chassis.setPose(64, 10, 125); 
-  rotation.set_position(96);
-  unclampGoal();
-  
-  pros::delay(500);
-  setLBState(4);
+
+  lbAllianceStake();
+
+  chassis.moveToPoint(48, 24, 4000, {.forwards = false, .maxSpeed = 80});
+  chassis.moveToPoint(64, 27, 4000, {.maxSpeed = 60});
   pros::delay(1000);
-  setLBState(2);
-  chassis.moveToPoint(52, 52, 3000, {.forwards = false, .maxSpeed = 70}); 
-  pros::delay(1500);
-  clampGoal();
-  hooks.move_voltage(12000);
-  intake.move_voltage(12000);
-  chassis.moveToPoint(48,38,1000); 
-  chassis.moveToPoint(18, 57, 1000); 
-  pros::delay(100);
-  chassis.moveToPoint(35,50,1000, {.forwards = false}); 
-  chassis.turnToHeading(0,1000);
-  chassis.moveToPoint(36, 70, 2000, {.maxSpeed = 80}); 
-  chassis.moveToPoint(24,55,1000, {.forwards = false});
-  chassis.moveToPoint(24, 70, 2000, {.maxSpeed = 80});
-  pros::delay(4000);
-  setLBState(0);
-  chassis.moveToPoint(57,57, 1000, {.forwards = false}); 
-  chassis.turnToHeading(45,1000);
-  pros::delay(1000);
-  setLBState(4);
-}
-
-
-
-void redGoal(){
-  //NO ALLIANCE STAKE----------------------------------------------------------------
-  // chassis.setPose(96, 10, 180);
-  // pros::delay(300);
-  // chassis.setPose(0,0,0);
-  // pros::delay(300);
-
-  // chassis.moveToPoint(0, 28, 4000, {.forwards = false, .maxSpeed = 60});
-  // ALLIANCE STAKE----------------------------------------------------------------
-  chassis.setPose(82, 13.5, 90);
+  doinker.set_value(true);
   pros::delay(300);
 
-  // chassis.moveToPoint(70, 13.5, 4000, {.forwards = false, .maxSpeed = 60});
-  // chassis.turnToHeading(0, 500, {.maxSpeed = 60});
-  // chassis.moveToPoint(70, 7, 4000, {.forwards = false, .maxSpeed = 50});
+  chassis.moveToPoint(35, 35, 4000, {.forwards = false, .maxSpeed = 80});
+  chassis.moveToPoint(52, 50, 4000, {.forwards = false, .maxSpeed = 70});
+  doinker.set_value(false);
+  pros::delay(2000);
+  clampGoal();
+  hooks.move_voltage(HOOK_SPEED);
+  intake.move_voltage(INTAKE_SPEED);
+  chassis.moveToPoint(42, 66, 4000, {.maxSpeed = 60});
+  chassis.turnToPoint(20, 69, 1000, {.maxSpeed = TURN_SPEED});
+  chassis.moveToPoint(20, 69, 4000, {.maxSpeed = 60});
 
-  allianceStake();
-  
-  chassis.swingToPoint(120, 48, DriveSide::RIGHT, 500);
+  chassis.moveToPoint(24, 48, 4000, {.maxSpeed = 100});
+  chassis.moveToPoint(24, 24, 4000, {.maxSpeed = 100});
+  chassis.moveToPoint(0, 0, 2000, {.maxSpeed = 100});
+  chassis.moveToPoint(20, 20, 4000, {.forwards = false, .maxSpeed = 100});
+  chassis.moveToPoint(12, 12, 1000, {.maxSpeed = 100});
 
-  //----------------------------------------------------------------  
-
-  // clamp.set_value(false);
-  // intake.move_voltage(8000);
-  // chassis.moveToPoint(118, 48, 4000, {.maxSpeed = 80});
-  // chassis.turnToHeading(90, 1000);
-
-  // chassis.moveToPoint(90, 48, 4000, {.forwards = false, .maxSpeed = 60});
-  // intake.move_voltage(0);
-  // clampGoal();
-  // intake.move_voltage(12000);
-  // pros::delay(750);
-  // intake.move_voltage(0);
-  // unclampGoal();
-
-  // chassis.moveToPoint(120, 52, 4000, {.maxSpeed = 100});
-
-  // chassis.turnToHeading(180, 1000);
-  // chassis.moveToPoint(120, 62, 4000, {.forwards = false, .maxSpeed = 60});
-  // clampGoal();
-  // intake.move_voltage(12000);
-
-  // chassis.moveToPoint(120, 45, 4000);
-  // chassis.moveToPose(90, 62, -45, 4000);
+  chassis.moveToPoint(60, 60, 4000, {.maxSpeed = 100});
+  pros::delay(300);
+  setLBState(6);
 
   pros::delay(10000);
+}
 
+void redGoal(){
+  ALLIANCE = RED;
+
+  chassis.setPose(80, 10, -125);
+  pros::delay(250);
+  lbAllianceStake();
+
+  chassis.moveToPoint(90, 52, 4000, {.forwards = false, .maxSpeed = 80});
+  pros::delay(1500);
+  clampGoal();
+  chassis.moveToPoint(78, 30, 4000, {.forwards = true, .maxSpeed = 60});
+  pros::delay(1200);
+  doinker.set_value(true);
+  pros::delay(300);
+  chassis.moveToPoint(95, 36, 4000, {.forwards = false, .maxSpeed = 100});
+  chassis.moveToPoint(72, 60, 4000, {.forwards = true, .maxSpeed = 60});
+  doinker.set_value(false);
+  intake.move_voltage(INTAKE_SPEED);
+  hooks.move_voltage(HOOK_SPEED);
+  pros::delay(1500);
+  doinker.set_value(true);
+  pros::delay(300);
+
+  chassis.moveToPoint(95, 24, 4000, {.forwards = false, .maxSpeed = 100});
+  chassis.moveToPoint(120, 55, 4000, {.forwards = true, .maxSpeed = 100});
+  doinker.set_value(false);
+  chassis.moveToPoint(120, 24, 4000, {.forwards = true, .maxSpeed = 100});
+
+  chassis.moveToPoint(144, 0, 2000, {.maxSpeed = 100});
+  chassis.moveToPoint(110, 10, 2000, {.forwards = false, .maxSpeed = 100});
+
+  //NO BAR TOUCH
+  // chassis.moveToPoint(144, -5, 2000, {.maxSpeed = 100});
+  // doinker.set_value(true);
+  // chassis.moveToPoint(120, 24, 4000, {.forwards = true, .maxSpeed = 100});
+  // chassis.moveToPoint(132, 12, 4000, {.forwards = false, .maxSpeed = 100});
+  // doinker.set_value(false);
+  // clamp.set_value(false);
+  // chassis.moveToPoint(120, 48, 4000, {.forwards = true, .maxSpeed = 120});
+  // hooks.move_voltage(0);
+  // intake.move_voltage(0);
+
+  //BAR TOUCH
+  setLBState(6);
+  chassis.moveToPoint(84, 50, 4000, {.forwards = true, .maxSpeed = 100});
+
+  pros::delay(10000);
 }
 
 void blueGoal(){
