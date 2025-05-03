@@ -23,7 +23,7 @@ void allianceStake(){
 void lbAllianceStake(){
   rotation.set_position(96);
   setLBState(4);
-  pros::delay(700);
+  pros::delay(600);
   setLBState(0);
 }
 
@@ -122,35 +122,185 @@ void redGoal(){
   pros::delay(10000);
 }
 
-void blueGoal(){
-  chassis.setPose(8, 22, 10);
-  pros::delay(1000);
-                  
-  doinker.set_value(true);
-  chassis.moveToPoint(17.5, 56.5, 4000, {.maxSpeed = 120});
-  pros::delay(800);
-  doinker.set_value(false);
-  chassis.moveToPoint(12, 24, 4000, {.forwards = false, .maxSpeed = 100});
-  pros::delay(1000);
-  doinker.set_value(true);
-  chassis.turnToHeading(180, 1000, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 60});
-  doinker.set_value(false);
-  chassis.moveToPoint(12, 48, 4000, {.forwards = false});
-  pros::delay(1000);
-  clamp.set_value(true);
-  hooks.move_voltage(12000);
-  pros:delay(500);
-  unclampGoal();
-  hooks.move_voltage(0);
+void redGoalRush(){
+  ALLIANCE = RED;
+  
+  chassis.setPose(120, 20, 0);
+  rotation.set_position(96);
 
-  chassis.moveToPoint(28, 48, 4000, {.maxSpeed = 80});
-  intake.move_voltage(12000);
-  chassis.moveToPoint(50, 48, 4000, {.forwards = false, .maxSpeed = 60});
-  pros::delay(2000);
-  clamp.set_value(true);
-  hooks.move_voltage(12000);
-  chassis.turnToHeading(45, 1000);
-  setLBState(2);
+  chassis.moveToPoint(120, 57, 4000, {.maxSpeed = 120});
+  intake.move_voltage(INTAKE_SPEED);
+  pros::delay(310);
+  setLBState(7);
+  chassis.turnToHeading(70, 1000, {.direction = AngularDirection::CW_CLOCKWISE});
+
+  chassis.moveToPoint(98, 42, 4000, {.forwards = false, .maxSpeed = 70});
+  setLBState(0);
+  pros::delay(1000);
+  clampGoal();
+  hooks.move_voltage(HOOK_SPEED);
+  intake.move_voltage(INTAKE_SPEED);
+
+  chassis.turnToHeading(-120, 1000, {.maxSpeed = TURN_SPEED});
+  chassis.moveToPoint(85, 22, 4000, {.maxSpeed = 60});
+  pros::delay(700);
+  doinker.set_value(true);
+  pros::delay(200);
+
+  chassis.moveToPoint(108, 36, 4000, {.forwards = false, .maxSpeed = 80});
+  chassis.turnToHeading(130, 1000, {.maxSpeed = TURN_SPEED});
+  pros::delay(500);
+  doinker.set_value(false);
+
+  chassis.moveToPoint(149, -5, 2000, {.maxSpeed = 80});
+  pros::delay(200);
+  intakeLifter.set_value(true);
+  chassis.moveToPoint(124, 20, 2000, {.forwards = false, .maxSpeed = 80});
+  intakeLifter.set_value(false);
+  chassis.moveToPoint(149, -5, 1000, {.maxSpeed = 80});
+  chassis.moveToPoint(120, 8, 4000, {.forwards = false, .maxSpeed = 80});
+  chassis.moveToPoint(144, 0, 1000, {.maxSpeed = 60});
+  doinker.set_value(true);
+  // chassis.moveToPoint(120, 24, 4000, {.forwards = true, .maxSpeed = 120});
+  chassis.moveToPoint(85, 50, 4000, {.forwards = true, .maxSpeed = 60});
+}
+
+void blueGoal(){
+  ALLIANCE = BLUE;
+
+  chassis.setPose(64, 10, 125); 
+  lbAllianceStake();
+
+  chassis.moveToPoint(48, 24, 4000, {.forwards = false, .maxSpeed = 80});
+  chassis.moveToPoint(64, 27, 4000, {.maxSpeed = 60});
+  pros::delay(800);
+  doinker.set_value(true);
+  pros::delay(200);
+
+  chassis.moveToPoint(48, 24, 4000, {.forwards = false, .maxSpeed = 80});
+  chassis.moveToPoint(58, 54, 4000, {.forwards = false, .maxSpeed = 70});
+  pros::delay(1500);
+  clampGoal();
+  hooks.move_voltage(HOOK_SPEED);
+  intake.move_voltage(INTAKE_SPEED);
+
+  chassis.turnToHeading(-120, 1000, {.maxSpeed = TURN_SPEED});
+  chassis.moveToPoint(34, 48, 4000, {.maxSpeed = 60});
+  doinker.set_value(false);
+
+  chassis.moveToPoint(40, 34, 4000, {.forwards = false, .maxSpeed = 80});
+
+  chassis.moveToPoint(0, 0, 2000, {.maxSpeed = 60});
+  pros::delay(1000);
+  intakeLifter.set_value(true);
+  chassis.moveToPoint(24, 24, 1000, {.forwards = false, .maxSpeed = 40});
+  intakeLifter.set_value(false);
+  // pros::delay(500);
+  chassis.moveToPoint(0, 0, 1000, {.maxSpeed = 60});
+  pros::delay(1000);
+
+  //NO BAR TOUCH
+  // chassis.moveToPoint(0, -5, 2000, {.maxSpeed = 100});
+  // doinker.set_value(true);
+  // chassis.moveToPoint(24, 24, 4000, {.forwards = true, .maxSpeed = 100});
+  // chassis.moveToPoint(12, 12, 4000, {.forwards = false, .maxSpeed = 100});
+  // doinker.set_value(false);
+  // clamp.set_value(false);
+  // chassis.moveToPoint(24, 48, 4000, {.forwards = true, .maxSpeed = 120});
+  // hooks.move_voltage(0);
+  // intake.move_voltage(0);
+
+  //BAR TOUCH
+  chassis.moveToPoint(60, 60, 4000, {.forwards = true, .maxSpeed = 100});
+  pros::delay(300);
+  setLBState(6);
+
+  pros::delay(10000);
+}
+
+void blueGoalRush(){
+  ALLIANCE = BLUE;
+  rotation.set_position(96);
+  
+  chassis.setPose(24, 20, 0);
+
+  chassis.moveToPoint(23, 57, 4000, {.maxSpeed = 120});
+  intake.move_voltage(INTAKE_SPEED);
+  pros::delay(310);
+  setLBState(7);
+  chassis.turnToHeading(-70, 1000, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
+
+  chassis.moveToPoint(46, 36, 4000, {.forwards = false, .maxSpeed = 70});
+  setLBState(0);
+  pros::delay(1000);
+  clampGoal();
+  hooks.move_voltage(HOOK_SPEED);
+  intake.move_voltage(INTAKE_SPEED);
+
+  chassis.turnToHeading(120, 1000, {.maxSpeed = TURN_SPEED});
+  chassis.moveToPoint(60, 28.5, 4000, {.maxSpeed = 60});
+  pros::delay(400);
+  doinker.set_value(true);
+  pros::delay(200);
+
+  chassis.moveToPoint(36, 36, 4000, {.forwards = false, .maxSpeed = 80});
+  chassis.turnToHeading(-180, 1000, {.maxSpeed = TURN_SPEED});
+  pros::delay(300);
+  doinker.set_value(false);
+
+  chassis.moveToPoint(-5, -5, 2000, {.maxSpeed = 80});
+  pros::delay(200);
+  intakeLifter.set_value(true);
+  chassis.moveToPoint(20, 20, 2000, {.forwards = false, .maxSpeed = 80});
+  intakeLifter.set_value(false);
+  chassis.moveToPoint(-5, -5, 1000, {.maxSpeed = 80});
+  chassis.moveToPoint(6, 24, 4000, {.forwards = false, .maxSpeed = 120});
+  chassis.moveToPoint(0, 0, 1000, {.maxSpeed = 80});
+  doinker.set_value(true);
+
+  //BAR TOUCH
+  chassis.moveToPoint(48, 52, 4000, {.maxSpeed = 120});
+
+
+  //NO BAR TOUCH
+  // chassis.moveToPoint(24, 24, 4000, {.maxSpeed = 120});
+  // unclampGoal();
+
+
+  // chassis.turnToHeading()
+
+  
+  
+  // chassis.moveToPoint(18, 57, 1500, {.maxSpeed = 120});
+  // pros::delay(800);
+  // doinker.set_value(true);
+  // pros::delay(500);
+
+  // chassis.moveToPoint(5, 48, 4000, {.forwards = false, .maxSpeed = 80});
+  // pros::delay(1000);
+  // doinker.set_value(false);
+  // pros::delay(200);
+
+  // chassis.turnToHeading(-160, 1000, {.direction = AngularDirection::CW_CLOCKWISE, .maxSpeed = TURN_SPEED});
+  // chassis.moveToPoint(15, 56, 4000, {.forwards = false, .maxSpeed = 80});
+  // pros::delay(1000);
+  // clampGoal();
+  // hooks.move_voltage(HOOK_SPEED);
+  // intake.move_voltage(INTAKE_SPEED);
+
+  // chassis.moveToPoint(24, 20, 4000, {.maxSpeed = 80});
+  // chassis.moveToPoint(0, 0, 2000, {.maxSpeed = 80});
+  // hooks.move_voltage(0);
+  // chassis.moveToPoint(12, 12, 4000, {.forwards = false, .maxSpeed = 80});
+
+  // chassis.turnToHeading(45, 1000, {.maxSpeed = TURN_SPEED});
+  // pros::delay(500);
+  // unclampGoal();
+
+  // chassis.moveToPoint(57, 20, 4000, {.maxSpeed = 60});
+  // pros::delay(1500);
+  // doinker.set_value(true);
+  // pros::delay(200);
 
   pros::delay(10000);
 }
@@ -224,19 +374,24 @@ void blueRingRush(){
   doinker.set_value(false);
 
   chassis.moveToPoint(124, 48, 4000, {.maxSpeed = 60});
+  
+  chassis.moveToPoint(112, 20, 4000, {.maxSpeed = 100});
+  chassis.moveToPoint(144, 0, 2000, {.maxSpeed = 100});
 
-  chassis.moveToPoint(144, 0, 3000, {.maxSpeed = 100});
-  // chassis.moveToPoint(130, 14, 2000, {.forwards = false, .maxSpeed = 100});
-  // chassis.moveToPoint(138, 6, 2000, {.maxSpeed = 100});
-
-  chassis.moveToPoint(85, 18, 4000, {.maxSpeed = 80});
+  chassis.moveToPoint(68, 16, 4000, {.maxSpeed = 60});
   pros::delay(2000);
   intakeLifter.set_value(true);
-  chassis.moveToPoint(72, 18, 4000, {.maxSpeed = 60});
-  pros::delay(1000);
+  setLBState(1);
+  pros::delay(1200);
   intakeLifter.set_value(false);
 
-
+  chassis.turnToHeading(180, 1000, {.maxSpeed = TURN_SPEED});
+  chassis.moveToPoint(72.5, 5, 3000, {.maxSpeed = 60});
+  chassis.turnToHeading(180, 1000, {.maxSpeed = TURN_SPEED});
+  pros::delay(1000);
+  lockLB(2);
+  setLBState(4);
+  
   pros::delay(10000);
 }
 

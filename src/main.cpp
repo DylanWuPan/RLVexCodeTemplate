@@ -15,7 +15,7 @@ int HOOK_SPEED = 10000;
 int INTAKE_SPEED = 12000;
 
 // Enums -----------------------------------------------------------------------
-enum LBState { DOWN, LOADING, HIGHSTAKE, DESCORE, ALLIANCESTAKE, TIPPING, BARTOUCH };
+enum LBState { DOWN, LOADING, HIGHSTAKE, DESCORE, ALLIANCESTAKE, TIPPING, BARTOUCH, GOALRUSH };
 LBState LB_STATE = DOWN;
 bool LB_LOADING = true;
 
@@ -113,6 +113,7 @@ void setLBState(int state) {
     case 4: LB_STATE = ALLIANCESTAKE; break;
     case 5: LB_STATE = TIPPING; break;
     case 6: LB_STATE = BARTOUCH; break;
+    case 7: LB_STATE = GOALRUSH; break;
   }
   LB_LOADING = true;
 }
@@ -155,6 +156,7 @@ void LBControl() {
       case ALLIANCESTAKE: targetPos = 850; break;
       case TIPPING: targetPos = 1000; break;
       case BARTOUCH: targetPos = 1200; break;
+      case GOALRUSH: targetPos = 819; break;
     }
     double error = targetPos - currentPos;
     double velocity = kp * error;
@@ -163,7 +165,7 @@ void LBControl() {
 }
 
 void hooksControl(){
-  if(hooks.get_actual_velocity() < 10 && hooks.get_voltage() > 1000 && !(LB_STATE == LOADING) && !isJammed){
+  if(hooks.get_actual_velocity() < 10 && hooks.get_voltage() > 1000 && !(LB_STATE == LOADING) && !isJammed && !isSkipping) {
     isJammed = true;
     hooks.move_voltage(-HOOK_SPEED);
     pros::delay(100);
@@ -231,25 +233,24 @@ void initialize() {
     }
   });
 
-  pros::Task screen_task([] {
-    while (true) {
-      lemlib::Pose robotPos = chassis.getPose();
-      pros::lcd::print(0, "X: %f", robotPos.x);
-      pros::lcd::print(0, "X: %f", hooks.get_actual_velocity());
-      pros::lcd::print(1, "Y: %f", robotPos.y);
-      pros::lcd::print(1, "Y: %ld", hooks.get_voltage());
-      pros::lcd::print(2, "Theta: %f", robotPos.theta);
-      pros::lcd::print(3, "LB: %ld", rotation.get_position() / -100);
-      pros::lcd::print(4, "LB_STATE: %d", LB_STATE);
-      pros::lcd::print(5, "OPTICAL SENSOR: %f", optical.get_hue());
-      pros::lcd::print(6, "ROGUE RING: %d", ROGUE_RING);
-      pros::lcd::print(7, "LIMIT SWITCH: %d", limitSwitch.get_new_press());
-      pros::lcd::print(8, "VERTICAL TRACKING: %i", vertical_tracking.get_position());
-      pros::lcd::print(9, "HORIZONTAL TRACKING: %i", horizontal_tracking.get_position());
-      pros::delay(20);
-    }
-    
-  });
+  // pros::Task screen_task([] {
+  //   while (true) {
+  //     lemlib::Pose robotPos = chassis.getPose();
+  //     pros::lcd::print(0, "X: %f", robotPos.x);
+  //     pros::lcd::print(0, "X: %f", hooks.get_actual_velocity());
+  //     pros::lcd::print(1, "Y: %f", robotPos.y);
+  //     pros::lcd::print(1, "Y: %ld", hooks.get_voltage());
+  //     pros::lcd::print(2, "Theta: %f", robotPos.theta);
+  //     pros::lcd::print(3, "LB: %ld", rotation.get_position() / -100);
+  //     pros::lcd::print(4, "LB_STATE: %d", LB_STATE);
+  //     pros::lcd::print(5, "OPTICAL SENSOR: %f", optical.get_hue());
+  //     pros::lcd::print(6, "ROGUE RING: %d", ROGUE_RING);
+  //     pros::lcd::print(7, "LIMIT SWITCH: %d", limitSwitch.get_new_press());
+  //     pros::lcd::print(8, "VERTICAL TRACKING: %i", vertical_tracking.get_position());
+  //     pros::lcd::print(9, "HORIZONTAL TRACKING: %i", horizontal_tracking.get_position());
+  //     pros::delay(20);
+  //   }
+  // });
 
 //   pros::Task lvgl_debug_update_task([] {
 //     while (true) {
@@ -288,7 +289,7 @@ void autonomous() {
   //   default: break;
   // }
 
-  blueRingRush();
+  redGoalRush();
 }
 
 void opcontrol() {
