@@ -156,7 +156,7 @@ void LBControl() {
       case ALLIANCESTAKE: targetPos = 850; break;
       case TIPPING: targetPos = 1000; break;
       case BARTOUCH: targetPos = 1200; break;
-      case GOALRUSH: targetPos = 819; break;
+      case GOALRUSH: targetPos = 830; break;
     }
     double error = targetPos - currentPos;
     double velocity = kp * error;
@@ -190,7 +190,7 @@ void skipRing() {
     isSkipping = true;
     pros::delay(30);
     hooks.move_voltage(0);
-    pros::delay(150);
+    pros::delay(170);
     hooks.move_voltage(HOOK_SPEED);
     ROGUE_RING = false;
     isSkipping = false;
@@ -289,7 +289,13 @@ void autonomous() {
   //   default: break;
   // }
 
-  redGoalRush();
+  // redRing();
+  // redGoal();
+  // redGoalRush();
+
+  blueRingRush();
+  // blueGoal();
+  // blueGoalRush();
 }
 
 void opcontrol() {
