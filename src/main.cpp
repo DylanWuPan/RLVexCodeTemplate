@@ -188,7 +188,7 @@ void colorSort() {
 void skipRing() {
   if(limitSwitch.get_new_press() & !isSkipping) {
     isSkipping = true;
-    pros::delay(30);
+    pros::delay(45);
     hooks.move_voltage(0);
     pros::delay(170);
     hooks.move_voltage(HOOK_SPEED);
@@ -311,7 +311,7 @@ void opcontrol() {
     chassis.tank(LeftY, RightY);
 
     // INTAKE/HOOKS ---------------------------------------------------------
-    if(!isJammed){
+    if(!isJammed && !isSkipping) {
       if (controller.get_digital(E_CONTROLLER_DIGITAL_R2)) {
         intake.move_voltage(-INTAKE_SPEED);
         hooks.move_voltage(-HOOK_SPEED);
@@ -342,10 +342,9 @@ void opcontrol() {
       IntakeValue = !IntakeValue;
     }
 
-    // RESET LB ROTATION ---------------------------------------------------
+    // ALLIANCE STAKE ---------------------------------------------------
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
-      // rotation.reset_position();
-      setLBState(5);
+      setLBState(4);
     }
 
     // DESCORE --------------------------------------------------------------
@@ -353,9 +352,9 @@ void opcontrol() {
       setLBState(3);
     }
 
-    // ALLIANCE STAKE -------------------------------------------------------
+    // TIPPING -------------------------------------------------------
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
-      setLBState(4);
+      setLBState(5);
     }
 
     // LADY BROWN CONTROL ---------------------------------------------------

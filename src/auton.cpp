@@ -400,7 +400,7 @@ void blueRingRush(){
   chassis.turnToHeading(180, 500, {.maxSpeed = TURN_SPEED});
   setLBState(1);
   intakeLifter.set_value(false);
-  chassis.moveToPoint(72, 5, 3000, {.maxSpeed = 60});
+  chassis.moveToPoint(72, 4.5, 3000, {.maxSpeed = 60});
   chassis.turnToHeading(180, 500, {.maxSpeed = TURN_SPEED});
   lockLB(2);
   setLBState(4);
