@@ -19,13 +19,14 @@ enum LBState { DOWN, LOADING, HIGHSTAKE, DESCORE, ALLIANCESTAKE, TIPPING, BARTOU
 LBState LB_STATE = DOWN;
 bool LB_LOADING = true;
 
-Alliance ALLIANCE = RED;
-int DEFAULT_HUE = 45;
+Alliance ALLIANCE = BLUE;
+int DEFAULT_HUE = 60;
 int BLUE_HUE = DEFAULT_HUE + 20;
 int RED_HUE = DEFAULT_HUE - 20;
 bool ROGUE_RING = false;
 bool isSkipping = false;
 bool isJammed = false;
+bool colorSortToggle = true;
   
 //LEMLIB ----------------------------------------------------------------
 lemlib::Drivetrain drivetrain(&left_drivetrain, // left motor group
@@ -180,13 +181,13 @@ void colorSort() {
     case RED: ROGUE_RING = optical.get_hue() > BLUE_HUE; break;
     case BLUE: ROGUE_RING = optical.get_hue() < RED_HUE; break;
   }
-  if(ROGUE_RING && hooks.get_voltage() > 0){
+  if(ROGUE_RING && hooks.get_voltage() > 0 && colorSortToggle){
     skipRing();
   }
 }
 
 void skipRing() {
-  if(limitSwitch.get_new_press() & !isSkipping) {
+  if(limitSwitch.get_new_press() & !isSkipping && !(LB_STATE == LOADING) && !isJammed) {
     isSkipping = true;
     pros::delay(45);
     hooks.move_voltage(0);
@@ -293,8 +294,8 @@ void autonomous() {
   // redGoal();
   // redGoalRush();
 
-  blueRingRush();
-  // blueGoal();
+  // blueRingRush();
+  blueGoal();
   // blueGoalRush();
 }
 
@@ -340,6 +341,11 @@ void opcontrol() {
     if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_RIGHT)) {
       intakeLifter.set_value(!IntakeValue);
       IntakeValue = !IntakeValue;
+    }
+
+    // COLORSORT TOGGLE --------------------------------------------------------
+    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN)) {
+      colorSortToggle = !colorSortToggle;
     }
 
     // ALLIANCE STAKE ---------------------------------------------------
