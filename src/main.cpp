@@ -294,8 +294,8 @@ void autonomous() {
   // redGoal();
   // redGoalRush();
 
-  // blueRingRush();
-  blueGoal();
+  blueRingRush();
+  // blueGoal();
   // blueGoalRush();
 }
 
@@ -346,6 +346,11 @@ void opcontrol() {
     // COLORSORT TOGGLE --------------------------------------------------------
     if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN)) {
       colorSortToggle = !colorSortToggle;
+      if(!colorSortToggle){
+      controller.rumble("..");
+      } else {
+        controller.rumble("-");
+      }
     }
 
     // ALLIANCE STAKE ---------------------------------------------------
