@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "blackbird x 25600Y",
+    "project_name": "robot x 25600",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -299,7 +299,7 @@
     },
     "upload_options": {
       "slot": 1,
-      "icon": "ufo",
+      "icon": "pros",
       "after": "screen"
     },
     "use_early_access": false

@@ -2,30 +2,8 @@
 #include "globals.h"
 #include "auton.h"
 
-#include <iostream>
-#include <fstream>
-#include <filesystem>
-#include <cmath>
-#include <string>
-
 // Constants -------------------------------------------------------------------
 float DRIVERS_SPEED = 1;
-int HOOK_SPEED = 10000;
-int INTAKE_SPEED = 12000;
-
-// Enums -----------------------------------------------------------------------
-enum LBState { DOWN, LOADING, HIGHSTAKE, DESCORE, ALLIANCESTAKE, TIPPING, BARTOUCH, GOALRUSH };
-LBState LB_STATE = DOWN;
-bool LB_LOADING = true;
-
-Alliance ALLIANCE = BLUE;
-int DEFAULT_HUE = 60;
-int BLUE_HUE = DEFAULT_HUE + 20;
-int RED_HUE = DEFAULT_HUE - 20;
-bool ROGUE_RING = false;
-bool isSkipping = false;
-bool isJammed = false;
-bool colorSortToggle = true;
   
 //LEMLIB ----------------------------------------------------------------
 lemlib::Drivetrain drivetrain(&left_drivetrain, // left motor group
@@ -37,13 +15,6 @@ lemlib::Drivetrain drivetrain(&left_drivetrain, // left motor group
 );
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_tracking, lemlib::Omniwheel::NEW_2, -2.25);
 lemlib::TrackingWheel vertical_tracking_wheel(&vertical_tracking, lemlib::Omniwheel::NEW_2, 0.25);
-
-// lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to null
-//                             nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
-//                             nullptr, // horizontal tracking wheel 1
-//                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
-//                             &inertial // inertial sensor
-// );
 
 lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel 1, set to null
                             nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
@@ -104,103 +75,8 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
 
 
 // Helper Functions ------------------------------------------------------------
-void setLBState(int state) {
-  switch(state) {
-    case 0: LB_STATE = DOWN; break;
-    case 1: LB_STATE = LOADING; break;
-    case 2: LB_STATE = HIGHSTAKE; break;
-    case 3: LB_STATE = DESCORE; break;
-    case 4: LB_STATE = ALLIANCESTAKE; break;
-    case 5: LB_STATE = TIPPING; break;
-    case 6: LB_STATE = BARTOUCH; break;
-    case 7: LB_STATE = GOALRUSH; break;
-  }
-  LB_LOADING = true;
-}
-
-void nextLBState() {
-  switch(LB_STATE) {
-    case DOWN: LB_STATE = LOADING; break;
-    case LOADING: LB_STATE = HIGHSTAKE; break;
-    default: LB_STATE = DOWN; break;
-  }
-    LB_LOADING = true;
-}
-
-void prevLBState() {
-  switch(LB_STATE) {
-    case DOWN: LB_STATE = HIGHSTAKE; break;
-    case LOADING: LB_STATE = DOWN; break;
-    case HIGHSTAKE: LB_STATE = LOADING; break;
-    default: LB_STATE = DOWN; break;
-  }
-    LB_LOADING = true;
-}
-
-void moveLB(float velocity) {
-  ladybrown.move(velocity);
-}
-
-void LBControl() {
-  double currentPos = (rotation.get_position() / -100.0);
-  if(currentPos < 0) rotation.reset_position();
-
-  if(LB_LOADING) {
-    double kp = 0.4;
-    double targetPos;
-    switch(LB_STATE) {
-      case DOWN: targetPos = 0; break;
-      case LOADING: targetPos = 110; break;
-      case HIGHSTAKE: targetPos = 700; break;
-      case DESCORE: targetPos = 600; break;
-      case ALLIANCESTAKE: targetPos = 850; break;
-      case TIPPING: targetPos = 1000; break;
-      case BARTOUCH: targetPos = 1200; break;
-      case GOALRUSH: targetPos = 830; break;
-    }
-    double error = targetPos - currentPos;
-    double velocity = kp * error;
-    moveLB(velocity);
-  }
-}
-
-void hooksControl(){
-  if(hooks.get_actual_velocity() < 10 && hooks.get_voltage() > 1000 && !(LB_STATE == LOADING) && !isJammed && !isSkipping) {
-    isJammed = true;
-    hooks.move_voltage(-HOOK_SPEED);
-    pros::delay(100);
-    hooks.move_voltage(HOOK_SPEED);
-    pros::delay(200);
-    isJammed = false;
-  }
-}
-
-void colorSort() {
-  switch(ALLIANCE) {
-    case RED: ROGUE_RING = optical.get_hue() > BLUE_HUE; break;
-    case BLUE: ROGUE_RING = optical.get_hue() < RED_HUE; break;
-  }
-  if(ROGUE_RING && hooks.get_voltage() > 0 && colorSortToggle){
-    skipRing();
-  }
-}
-
-void skipRing() {
-  if(limitSwitch.get_new_press() & !isSkipping && !(LB_STATE == LOADING) && !isJammed) {
-    isSkipping = true;
-    pros::delay(45);
-    hooks.move_voltage(0);
-    pros::delay(170);
-    hooks.move_voltage(HOOK_SPEED);
-    ROGUE_RING = false;
-    isSkipping = false;
-  }
-}
-
-void scoreAllianceStake() {
-  chassis.setPose(0, 0, 0);
-  chassis.moveToPoint(0, -10, 0);
-  setLBState(4);
+void helperFunction(){
+  ...
 }
 
 // Main Functions --------------------------------------------------------------
@@ -208,50 +84,16 @@ void initialize() {
   pros::lcd::initialize();
   chassis.calibrate();
   chassis.setPose(0, 0, 0);
-  rotation.reset_position();
-  optical.set_led_pwm(100);
-
-  pros::Task LBControlTask([] {
-    while (true) {
-      LBControl();
-      pros::delay(10);
-    }
-  });
-
-  pros::Task ColorSortTask([] {
-    while (true) {
-      colorSort();
-      pros::delay(5);
-    }
-  });
-
-  pros::Task HooksTask([] {
-    while (true) {
-      hooksControl();
-      pros::delay(15);
-    }
-  });
 
   // Brain Screen Readouts
-
-  // pros::Task screen_task([] {
-  //   while (true) {
-  //     lemlib::Pose robotPos = chassis.getPose();
-  //     pros::lcd::print(0, "X: %f", robotPos.x);
-  //     pros::lcd::print(0, "X: %f", hooks.get_actual_velocity());
-  //     pros::lcd::print(1, "Y: %f", robotPos.y);
-  //     pros::lcd::print(1, "Y: %ld", hooks.get_voltage());
-  //     pros::lcd::print(2, "Theta: %f", robotPos.theta);
-  //     pros::lcd::print(3, "LB: %ld", rotation.get_position() / -100);
-  //     pros::lcd::print(4, "LB_STATE: %d", LB_STATE);
-  //     pros::lcd::print(5, "OPTICAL SENSOR: %f", optical.get_hue());
-  //     pros::lcd::print(6, "ROGUE RING: %d", ROGUE_RING);
-  //     pros::lcd::print(7, "LIMIT SWITCH: %d", limitSwitch.get_new_press());
-  //     pros::lcd::print(8, "VERTICAL TRACKING: %i", vertical_tracking.get_position());
-  //     pros::lcd::print(9, "HORIZONTAL TRACKING: %i", horizontal_tracking.get_position());
-  //     pros::delay(20);
-  //   }
-  // });
+  pros::Task screen_task([] {
+    while (true) {
+      lemlib::Pose robotPos = chassis.getPose();
+      pros::lcd::print(0, "X: %f", robotPos.x);
+      pros::lcd::print(1, "Y: %f", robotPos.y);
+      pros::delay(20);
+    }
+  });
 }
 
 void disabled() {}
@@ -259,93 +101,19 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-  // redRing();
-  // redGoal();
-  // redGoalRush();
-
-  blueRingRush();
-  // blueGoal();
-  // blueGoalRush();
+  // sampleAuto1()
+  sampleAuto2()
 }
 
 void opcontrol() {
-  bool ClampValue = false;
-  bool DoinkerValue = false;
-  bool HangValue = false;
-  bool IntakeValue = false;
-
   while (true) {
     // DRIVE ----------------------------------------------------------------
     float LeftY = DRIVERS_SPEED * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y);
     float RightY = DRIVERS_SPEED * controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y);
     chassis.tank(LeftY, RightY);
 
-    // INTAKE/HOOKS ---------------------------------------------------------
-    if(!isJammed && !isSkipping) {
-      if (controller.get_digital(E_CONTROLLER_DIGITAL_R2)) {
-        intake.move_voltage(-INTAKE_SPEED);
-        hooks.move_voltage(-HOOK_SPEED);
-      } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R1)) {
-        intake.move_voltage(INTAKE_SPEED);
-        hooks.move_voltage(HOOK_SPEED);
-      } else {
-        intake.move_voltage(0);
-        hooks.move_voltage(0);
-      }
-    }
-
-    // CLAMP ----------------------------------------------------------------
-    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_UP)) {
-      clamp.set_value(!ClampValue);
-      ClampValue = !ClampValue;
-    }
-
-    // DOINKER --------------------------------------------------------------
-    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_LEFT)) {
-      doinker.set_value(!DoinkerValue);
-      DoinkerValue = !DoinkerValue;
-    }
-
-    // INTAKE LIFTER --------------------------------------------------------
-    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_RIGHT)) {
-      intakeLifter.set_value(!IntakeValue);
-      IntakeValue = !IntakeValue;
-    }
-
-    // COLORSORT TOGGLE --------------------------------------------------------
-    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN)) {
-      colorSortToggle = !colorSortToggle;
-      if(!colorSortToggle){
-      controller.rumble("..");
-      } else {
-        controller.rumble("-");
-      }
-    }
-
-    // ALLIANCE STAKE ---------------------------------------------------
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
-      setLBState(4);
-    }
-
-    // DESCORE --------------------------------------------------------------
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-      setLBState(3);
-    }
-
-    // TIPPING -------------------------------------------------------
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
-      setLBState(5);
-    }
-
-    // LADY BROWN CONTROL ---------------------------------------------------
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
-      setLBState(1);
-    } else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
-      nextLBState();
-    } else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
-      prevLBState();
-    } else {
-      ladybrown.move_voltage(0);
+      ...
     }
 
     pros::delay(20);
