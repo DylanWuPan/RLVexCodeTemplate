@@ -1,7 +1,6 @@
 #include "main.h"
 #include "globals.h"
 #include "auton.h"
-#include "autonSelector/autonSelector.h"
 
 #include <iostream>
 #include <fstream>
@@ -204,10 +203,9 @@ void scoreAllianceStake() {
   setLBState(4);
 }
 
-// Main Lifecycle --------------------------------------------------------------
+// Main Functions --------------------------------------------------------------
 void initialize() {
   pros::lcd::initialize();
-  // autonSelector::init();
   chassis.calibrate();
   chassis.setPose(0, 0, 0);
   rotation.reset_position();
@@ -234,6 +232,8 @@ void initialize() {
     }
   });
 
+  // Brain Screen Readouts
+
   // pros::Task screen_task([] {
   //   while (true) {
   //     lemlib::Pose robotPos = chassis.getPose();
@@ -252,25 +252,6 @@ void initialize() {
   //     pros::delay(20);
   //   }
   // });
-
-//   pros::Task lvgl_debug_update_task([] {
-//     while (true) {
-//         lemlib::Pose robotPos = chassis.getPose();
-
-//         lv_label_set_text_fmt(autonSelector::debugLabels[0], "X: %.2f", robotPos.x);
-//         lv_label_set_text_fmt(autonSelector::debugLabels[1], "Y: %.2f", robotPos.y);
-//         lv_label_set_text_fmt(autonSelector::debugLabels[2], "Theta: %.2f", robotPos.theta);
-//         lv_label_set_text_fmt(autonSelector::debugLabels[3], "LB: %ld", rotation.get_position() / -100);
-//         lv_label_set_text_fmt(autonSelector::debugLabels[4], "LB_STATE: %d", LB_STATE);
-//         lv_label_set_text_fmt(autonSelector::debugLabels[5], "OPTICAL SENSOR: %.2f", optical.get_hue());
-//         lv_label_set_text_fmt(autonSelector::debugLabels[6], "ROGUE RING: %d", ROGUE_RING);
-//         lv_label_set_text_fmt(autonSelector::debugLabels[7], "LIMIT SWITCH: %d", limitSwitch.get_new_press());
-//         lv_label_set_text_fmt(autonSelector::debugLabels[8], "VERTICAL TRACKING: %i", vertical_tracking.get_position());
-//         lv_label_set_text_fmt(autonSelector::debugLabels[9], "HORIZONTAL TRACKING: %i", horizontal_tracking.get_position());
-
-//         pros::delay(100); // Update every 100ms
-//     }
-// });
 }
 
 void disabled() {}
@@ -278,18 +259,6 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-  // int selected = autonSelector::auton;
-  // switch (selected) {
-  //   case 0: skillsAuto(); break;
-  //   case 1: redRing(); break;
-  //   case 2: redGoal(); break;
-  //   case 3: redSAWP(); break;
-  //   case -1: blueRing(); break;
-  //   case -2: blueGoal(); break;
-  //   case -3: /* blueSAWP(); */ break;
-  //   default: break;
-  // }
-
   // redRing();
   // redGoal();
   // redGoalRush();

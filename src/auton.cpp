@@ -2,10 +2,13 @@
 #include "globals.h"
 #include "auton.h"
 
+// Variables
 const int TURN_SPEED = 80;
 const int HOOK_SPEED = 10000;
 const int INTAKE_SPEED = 12000;
 
+
+// Helper Functions
 void clampGoal(){
   clamp.set_value(true);
   pros::delay(200);
@@ -37,6 +40,7 @@ void lockLB(int count){
   }
 }
 
+// Match Autos
 void redRing(){
   ALLIANCE = RED;
   chassis.setPose(64, 10, 125); 
